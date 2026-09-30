@@ -1,0 +1,54 @@
+"use client";
+
+import { useState } from "react";
+import { Icon } from "@iconify/react";
+import { PageHeader } from "@/components/PageHeader";
+import { BackPill } from "@/components/AuthShell";
+import { members } from "@/lib/team";
+
+const levels = [1, 2, 3] as const;
+
+export default function TeamViewPage() {
+  const [level, setLevel] = useState<1 | 2 | 3>(1);
+
+  return (
+    <div className="dashboard-shell">
+      <PageHeader right={<BackPill href="/team" />} />
+
+      <div className="panel-card panel-card--center">
+        <span className="assets-pill">Team Commission</span>
+        <p className="assets-value">$134,876,890</p>
+        <p className="assets-meta">
+          Total Withdrawal: <span className="text-accent">$97,094,000</span>
+        </p>
+        <div className="level-tabs">
+          {levels.map((l) => (
+            <button
+              key={l}
+              type="button"
+              className={`level-tab ${level === l ? "level-tab--active" : ""}`}
+              onClick={() => setLevel(l)}
+            >
+              Level {l}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="member-list">
+        {members.map((m, i) => (
+          <div className="member-row" key={i}>
+            <span className="member-avatar">
+              <Icon icon="lucide:user" width="18" />
+              <span className="member-dot" />
+            </span>
+            <div>
+              <p className="member-email">{m.email}</p>
+              <p className="member-id">ID:{m.id}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
