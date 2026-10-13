@@ -10,7 +10,7 @@ export function AccountMenu() {
     <div className="account-menu-wrap">
       <div className="header-icons">
         <button className="icon-btn" type="button" aria-label="Wallet">
-          <Icon icon="lucide:briefcase" width="16" />
+          <Icon icon="reicon:notification-status-filled" width="24" />
         </button>
         <button
           className="icon-btn"
@@ -18,7 +18,7 @@ export function AccountMenu() {
           aria-label="Settings"
           onClick={() => setOpen((o) => !o)}
         >
-          <Icon icon="lucide:settings" width="16" />
+          <Icon icon="reicon:setting-filled" width="24" />
         </button>
       </div>
 

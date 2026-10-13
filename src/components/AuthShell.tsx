@@ -20,7 +20,7 @@ export function AuthShell({
   return (
     <main className="auth-shell">
       <div className="auth-logo">
-        <Logo width={68} />
+        <Logo width={81} />
       </div>
       <div className="auth-top">{topSlot}</div>
       <section className="auth-card">
@@ -36,7 +36,7 @@ export function AuthShell({
 export function BackPill({ href = "/login" }: { href?: string }) {
   return (
     <Link href={href} className="pill">
-      <Icon icon="lucide:arrow-left" width="14" /> Back
+      <Icon icon="heroicons-outline:arrow-narrow-left" width="14" /> Back
     </Link>
   );
 }

@@ -32,7 +32,7 @@ export function PasswordField({
           aria-label={visible ? "Hide password" : "Show password"}
           className="field-toggle"
         >
-          <Icon icon={visible ? "lucide:eye-off" : "lucide:eye"} width="16" />
+          <Icon icon={visible ? "fluent:eye-off-32-filled" : "fluent:eye-32-filled"} width="16" />
         </button>
       </div>
       {error && <p className="field-error-text">{error}</p>}

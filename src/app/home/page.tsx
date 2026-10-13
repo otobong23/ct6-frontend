@@ -4,23 +4,27 @@ import { AccountMenu } from "@/components/AccountMenu";
 import { WalletChart } from "@/components/WalletCharts";
 import { BottomNav } from "@/components/BottomNav";
 import { coins, coinIconColors } from "@/lib/coins";
+import { Logo } from "@/components/Logo";
+import Image from "next/image";
 
 const actions = [
-  { label: "Recharge", icon: "lucide:wallet" },
-  { label: "withdraw", icon: "lucide:arrow-down-to-line" },
-  { label: "Help", icon: "lucide:headphones" },
-  { label: "Team", icon: "lucide:users" },
-  { label: "My bank", icon: "lucide:landmark" },
-  { label: "AI Trade", icon: "lucide:line-chart" },
-  { label: "Portfolio", icon: "lucide:layers" },
-  { label: "The How", icon: "lucide:book-open" },
+  { label: "Recharge", icon: "solar:money-bag-bold" },
+  { label: "withdraw", icon: "ion:card" },
+  { label: "Help", icon: "streamline-plump:customer-support-3-solid" },
+  { label: "Team", icon: "fluent:people-team-28-filled" },
+  { label: "My bank", icon: "mingcute:bank-fill" },
+  { label: "AI Trade", icon: "ic:round-candlestick-chart" },
+  { label: "Portfolio", icon: "basil:stack-solid" },
+  { label: "The How", icon: "mingcute:presentation-1-fill" },
 ];
 
 export default function HomePage() {
   return (
     <div className="dashboard-shell">
       <header className="dashboard-header">
-        <h1 className="header-logo">CT6</h1>
+        <h1 className="header-logo">
+          <Logo width={40} />
+        </h1>
         <AccountMenu />
       </header>
 
@@ -36,10 +40,10 @@ export default function HomePage() {
         <span className="assets-pill">Total Assets</span>
         <p className="assets-value">$134,876</p>
         <p className="assets-meta">
-          Return: <span className="text-accent">$3,000</span> NTP :{" "}
+          Return: <span className="text-accent mr-5">$3,000</span> NTP :{" "}
           <span className="text-accent">+2.30%</span>
         </p>
-        <div className="lang-chip-row">
+        <div className="lang-chip-row hidden!">
           <span className="lang-chip">English</span>
           <span className="lang-chip">English</span>
           <span className="lang-chip">English</span>
@@ -51,7 +55,7 @@ export default function HomePage() {
         {actions.map(({ label, icon }) => (
           <button type="button" key={label} className="action-item">
             <span className="action-icon">
-              <Icon icon={icon} width="18" />
+              <Icon icon={icon} width="38" />
             </span>
             {label}
           </button>
@@ -71,9 +75,8 @@ export default function HomePage() {
             <div className="coin-row" key={i}>
               <span
                 className="coin-icon"
-                style={{ background: coinIconColors[coin.symbol] }}
               >
-                {coin.symbol[0]}
+                <Image src={coin.icon} alt={coin.name} width={30} />
               </span>
               <div className="coin-info">
                 <p className="coin-name">{coin.name}</p>

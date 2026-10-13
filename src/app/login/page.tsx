@@ -47,11 +47,13 @@ export default function LoginPage() {
       }
     >
       <form onSubmit={handleSubmit} className="stack">
-        <TextField className="stack-email"
+        <TextField
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+          required
           error={errors.email}
         />
         <PasswordField
@@ -65,7 +67,7 @@ export default function LoginPage() {
           Forgot password
         </Link>
 
-        <Button type="submit" disabled={submitting}>
+        <Button style={{ background: email && password ? "#68FF7F" : "#0AA521"}} type="submit" disabled={submitting}>
           {submitting ? "Logging in…" : "Register"}
         </Button>
       </form>
