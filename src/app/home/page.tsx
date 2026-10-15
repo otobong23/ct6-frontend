@@ -41,7 +41,7 @@ export default function HomePage() {
         <p className="assets-value">$134,876</p>
         <p className="assets-meta">
           Return: <span className="text-accent mr-5">$3,000</span> NTP :{" "}
-          <span className="text-accent">+2.30%</span>
+          <span className="text-[#0AA521]">+2.30%</span>
         </p>
         <div className="lang-chip-row hidden!">
           <span className="lang-chip">English</span>

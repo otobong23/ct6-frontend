@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { PageHeader } from "@/components/PageHeader";
 import { BackPill } from "@/components/AuthShell";
 import { StatusOverlay } from "@/components/StatusOverlay";
+import QR_codeGenerator from "@/components/QR_codeGenerator";
 
 const quickAmounts = ["50", "100", "200", "500", "1000"];
 
@@ -13,6 +14,8 @@ export default function DepositPage() {
   const [txid, setTxid] = useState("");
   const [step, setStep] = useState<"amount" | "confirm" | "result">("amount");
   const [result, setResult] = useState<"success" | "fail">("success");
+
+  const [QrcodeValue, setQrcodeValue] = useState('48394u83uc483jjds884334')
 
   function handleContinue(e: React.FormEvent) {
     e.preventDefault();
@@ -71,11 +74,16 @@ export default function DepositPage() {
             <p className="confirm-amount-label">Amount to Deposit</p>
             <p className="confirm-amount-value">${Number(amount || 0).toLocaleString()}.00</p>
             <p className="confirm-amount-network">
-              Network <span className="text-accent">USDT</span>
+              Network <span className="text-[#0AA521]">USDT</span>
             </p>
           </div>
           <div className="qr-box">
             <div className="qr-placeholder" />
+          </div>
+          <div className="flex justify-center">
+            <div className="p-5.5 bg-[#282C33]/80 rounded-[12px] shadow-(--pill-box-shadow)">
+              <QR_codeGenerator value="QrcodeValue" size={207} />
+            </div>
           </div>
           <p className="field-label" style={{ marginTop: 12 }}>
             Wallet Address

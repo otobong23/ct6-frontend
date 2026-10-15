@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { AccountMenu } from "@/components/AccountMenu";
 import { BottomNav } from "@/components/BottomNav";
@@ -8,13 +8,16 @@ import { ModelCard } from "@/components/ModelCard";
 import { StatusOverlay } from "@/components/StatusOverlay";
 import { WalletChart } from "@/components/WalletCharts";
 import { models, type Model } from "@/lib/models";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 
 type Stage = "idle" | "confirm" | "success" | "fail";
 
 export default function ModelsPage() {
-  const [index, setIndex] = useState(0);
   const [stage, setStage] = useState<Stage>("idle");
   const [activeModel, setActiveModel] = useState<Model>(models[0]);
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
 
   function handleActivate(model: Model) {
     setActiveModel(model);
@@ -25,42 +28,66 @@ export default function ModelsPage() {
     setStage(Math.random() > 0.5 ? "success" : "fail");
   }
 
+  useEffect(() => {
+    if (!api) return;
+
+    const update = () => {
+      setCurrent(api.selectedScrollSnap());
+      setCount(api.scrollSnapList().length);
+    };
+
+    update();
+
+    api.on("select", update);
+    api.on("reInit", update);
+
+    return () => {
+      api.off("select", update);
+      api.off("reInit", update);
+    };
+  }, [api]);
+
   return (
-    <div className="dashboard-shell">
-      <PageHeader right={<AccountMenu />} />
+    <div className="max-w-120 min-h-dvh my-0 mx-auto pt-5 pb-25 relative">
+      <div className="px-4">
+        <PageHeader right={<AccountMenu />} />
 
-      <div className="assets-card" style={{ marginTop: 16 }}>
-        <WalletChart />
-      </div>
+        <div className="assets-card" style={{ marginTop: 16 }}>
+          <WalletChart />
+        </div>
 
-      <h2 className="section-title" style={{ marginTop: 16 }}>
-        Copy Trading
-      </h2>
-      <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
-        Follow proven trade patterns. Copy their moves. Earn with strategy.
-      </p>
+        <h2 className="section-title" style={{ marginTop: 16 }}>
+          Copy Trading
+        </h2>
+        <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
+          Follow proven trade patterns. Copy their moves. Earn with strategy.
+        </p>
 
-      <div className="carousel">
+        {/* Carousel Dot buttons */}
         <div className="carousel-dots">
-          {models.map((_, i) => (
+          {Array.from({ length: count }).map((_, index) => (
             <button
-              key={i}
+              key={index}
               type="button"
-              className={`carousel-dot ${i === index ? "carousel-dot--active" : ""}`}
-              onClick={() => setIndex(i)}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={current === index ? "true" : undefined}
+              onClick={() => api?.scrollTo(index)}
+              className={`carousel-dot ${current === index ? "carousel-dot--active" : ""}`}
             />
           ))}
         </div>
-        <div
-          className="carousel-track"
-          style={{ transform: `translateX(-${index * 100}%)` }}
-        >
-          {models.map((m) => (
-            <div className="carousel-slide" key={m.id}>
-              <ModelCard model={m} onActivate={handleActivate} />
-            </div>
-          ))}
-        </div>
+      </div>
+
+      <div className="carousel">
+        <Carousel opts={{ loop: true, align: "center" }} className="w-full" setApi={setApi}>
+          <CarouselContent>
+            {models.map((m) => (
+              <CarouselItem className="basis-[85%] pl-5" key={m.id}>
+                <ModelCard model={m} onActivate={handleActivate} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
 
       {stage === "confirm" && (
