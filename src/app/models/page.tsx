@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -13,6 +14,7 @@ import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/com
 type Stage = "idle" | "confirm" | "success" | "fail";
 
 export default function ModelsPage() {
+  const { t } = useTranslation();
   const [stage, setStage] = useState<Stage>("idle");
   const [activeModel, setActiveModel] = useState<Model>(models[0]);
   const [api, setApi] = useState<CarouselApi>();
@@ -57,10 +59,10 @@ export default function ModelsPage() {
         </div>
 
         <h2 className="section-title" style={{ marginTop: 16 }}>
-          Copy Trading
+          {t("copy trading")}
         </h2>
         <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
-          Follow proven trade patterns. Copy their moves. Earn with strategy.
+          {t("copy trading text")}
         </p>
 
         {/* Carousel Dot buttons */}
@@ -93,8 +95,8 @@ export default function ModelsPage() {
       {stage === "confirm" && (
         <StatusOverlay
           kind="confirm"
-          title="Confirm activation"
-          subtitle="You're about to activate the trust trading model"
+          title={t("Confirm activation")}
+          subtitle={t("You're about to activate the trust trading model")}
           confirmRows={[
             { label: "Copy Trade Price:", value: `${activeModel.min}/${activeModel.max}` },
             { label: "Current Profit:", value: activeModel.percent },
@@ -107,16 +109,16 @@ export default function ModelsPage() {
       {stage === "success" && (
         <StatusOverlay
           kind="success"
-          title="Activated"
-          subtitle="You will now received profit daily"
+          title={t("Activated")}
+          subtitle={t("You will now received profit daily")}
           onContinue={() => setStage("idle")}
         />
       )}
       {stage === "fail" && (
         <StatusOverlay
           kind="fail"
-          title="Failed"
-          subtitle="You do not have sufficient fund to activate"
+          title={t("Failed")}
+          subtitle={t("You do not have sufficient fund to activate")}
           onContinue={() => setStage("idle")}
         />
       )}

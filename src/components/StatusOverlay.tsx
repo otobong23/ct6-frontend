@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
+import { useTranslation } from "react-i18next";
 
 export function StatusOverlay({
   kind,
@@ -17,6 +18,7 @@ export function StatusOverlay({
   onContinue: () => void;
   onCancel?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="overlay-backdrop">
       <div className="overlay-card">
@@ -49,11 +51,11 @@ export function StatusOverlay({
           className={`btn-primary ${kind === "fail" ? "btn-primary--danger" : ""}`}
           onClick={onContinue}
         >
-          Continue
+          {t("Continue")}
         </button>
         {onCancel && (
           <button type="button" className="btn-secondary" onClick={onCancel}>
-            Cancel
+            {t("Cancel")}
           </button>
         )}
       </div>

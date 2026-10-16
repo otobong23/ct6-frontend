@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { PageHeader } from "@/components/PageHeader";
@@ -9,6 +10,7 @@ import { members } from "@/lib/team";
 const levels = [1, 2, 3] as const;
 
 export default function TeamViewPage() {
+  const { t } = useTranslation();
   const [level, setLevel] = useState<1 | 2 | 3>(1);
 
   return (
@@ -17,10 +19,10 @@ export default function TeamViewPage() {
 
       <div className="panel-section">
         <div className="panel-card--center mb-10.75">
-          <span className="assets-pill">Team Deposit</span>
-          <p className="assets-value">$134,876,890</p>
+          <span className="assets-pill">{t("Team Deposit")}</span>
+          <p className="assets-value">{t("$134,876,890")}</p>
           <p className="assets-meta">
-            Total Withdrawal: <span className="text-accent">$97,094,000</span>
+            {t("Total Withdrawal:")} <span className="text-accent">{t("$97,094,000")}</span>
           </p>
           <div className="level-tabs">
             {levels.map((l) => (
@@ -30,7 +32,7 @@ export default function TeamViewPage() {
                 className={`level-tab ${level === l ? "level-tab--active" : ""}`}
                 onClick={() => setLevel(l)}
               >
-                Level {l}
+                {t("Level")} {l}
               </button>
             ))}
           </div>
@@ -45,7 +47,7 @@ export default function TeamViewPage() {
               </span>
               <div>
                 <p className="member-email">{m.email}</p>
-                <p className="member-id">ID:{m.id}</p>
+                <p className="member-id">{t("ID:")}{m.id}</p>
               </div>
             </div>
           ))}
@@ -57,7 +59,7 @@ export default function TeamViewPage() {
               </span>
               <div>
                 <p className="member-email">{m.email}</p>
-                <p className="member-id">ID:{m.id}</p>
+                <p className="member-id">{t("ID:")}{m.id}</p>
               </div>
             </div>
           ))}
@@ -69,7 +71,7 @@ export default function TeamViewPage() {
               </span>
               <div>
                 <p className="member-email">{m.email}</p>
-                <p className="member-id">ID:{m.id}</p>
+                <p className="member-id">{t("ID:")}{m.id}</p>
               </div>
             </div>
           ))}

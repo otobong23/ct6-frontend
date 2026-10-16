@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthShell, BackPill } from "@/components/AuthShell";
@@ -8,6 +9,7 @@ import { Button } from "@/components/Button";
 import { useCountdown } from "@/components/useCountdown";
 
 export default function VerifyEmailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [values, setValues] = useState<string[]>(Array(6).fill(""));
   const { seconds, reset } = useCountdown(59);
@@ -23,25 +25,25 @@ export default function VerifyEmailPage() {
   return (
     <AuthShell
       topSlot={<BackPill />}
-      title="Email Verification"
-      subtitle="Now enter six digit code sent to your email"
+      title={t("Email Verification")}
+      subtitle={t("Now enter six digit code sent to your email")}
     >
       <form onSubmit={handleSubmit} className="stack-lg">
         <OtpInput values={values} onChange={setValues} />
 
         <p className="otp-note">
-          Send again in{" "}
+          {t("Send again in")}{" "}
           {seconds > 0 ? (
-            <span className="text-accent">{seconds}s</span>
+            <span className="text-accent">{seconds}{t("s")}</span>
           ) : (
             <button type="button" onClick={reset} className="link-accent" style={{ display: "inline" }}>
-              Resend
+              {t("Resend")}
             </button>
           )}
         </p>
 
         <Button type="submit" disabled={code.length !== 6}>
-          Register
+          {t("Register")}
         </Button>
       </form>
     </AuthShell>

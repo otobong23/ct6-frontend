@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "@iconify/react";
+import { useTranslation } from "react-i18next";
 
 const items = [
   { href: "/home", label: "Home", icon: "solar:home-bold" },
@@ -14,6 +15,7 @@ const items = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <nav className="bottom-nav">
@@ -28,7 +30,7 @@ export function BottomNav() {
             <span className={center ? "nav-icon nav-icon--center" : "nav-icon"}>
               <Icon icon={icon} width={center ? 50 : 28} style={{color: center && active ? "#04170f": ""}} />
             </span>
-            <span className="nav-label">{label}</span>
+            <span className="nav-label">{t(label)}</span>
           </Link>
         );
       })}

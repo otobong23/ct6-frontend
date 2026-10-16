@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { BackPill } from "@/components/AuthShell";
@@ -8,6 +9,7 @@ import { PasswordField } from "@/components/PasswordField";
 import { Button } from "@/components/Button";
 
 export default function BankDetailsPage() {
+  const { t } = useTranslation();
   const [bankName, setBankName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
@@ -21,19 +23,19 @@ export default function BankDetailsPage() {
     <div className="dashboard-shell">
       <PageHeader right={<BackPill href="/profile" />} />
       <form onSubmit={handleSubmit} className="stack" style={{ marginTop: 20 }}>
-        <TextField placeholder="Enter Bank name" value={bankName} onChange={(e) => setBankName(e.target.value)} />
+        <TextField placeholder={t("Enter Bank name")} value={bankName} onChange={(e) => setBankName(e.target.value)} />
         <TextField
-          placeholder="Enter account number"
+          placeholder={t("Enter account number")}
           value={accountNumber}
           onChange={(e) => setAccountNumber(e.target.value)}
         />
         <TextField
-          placeholder="Enter account name"
+          placeholder={t("Enter account name")}
           value={accountName}
           onChange={(e) => setAccountName(e.target.value)}
         />
-        <PasswordField placeholder="Create Password" value={password} onChange={setPassword} />
-        <Button type="submit">Save</Button>
+        <PasswordField placeholder={t("Create Password")} value={password} onChange={setPassword} />
+        <Button type="submit">{t("Save")}</Button>
       </form>
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import Link from "next/link";
 import { AuthShell, LanguagePill } from "@/components/AuthShell";
@@ -8,6 +9,7 @@ import { PasswordField } from "@/components/PasswordField";
 import { Button } from "@/components/Button";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -35,13 +37,13 @@ export default function LoginPage() {
   return (
     <AuthShell
       topSlot={<LanguagePill />}
-      title="Log in"
-      subtitle="Enter valid email and password"
+      title={t("Log in")}
+      subtitle={t("Enter valid email and password")}
       footer={
         <span className="text-muted">
-          Don&apos;t have an account?{" "}
+          {t("Don&apos;t have an account?")}{" "}
           <Link href="/register" className="link-accent" style={{ display: "inline" }}>
-            Sign up
+            {t("Sign up")}
           </Link>
         </span>
       }
@@ -49,7 +51,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="stack">
         <TextField
           type="email"
-          placeholder="Email"
+          placeholder={t("Email")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
@@ -57,14 +59,14 @@ export default function LoginPage() {
           error={errors.email}
         />
         <PasswordField
-          placeholder="Create Password"
+          placeholder={t("Create Password")}
           value={password}
           onChange={setPassword}
           error={errors.password}
         />
 
         <Link href="/forgot-password" className="link-accent">
-          Forgot password
+          {t("Forgot password")}
         </Link>
 
         <Button style={{ background: email && password ? "#68FF7F" : "#0AA521"}} type="submit" disabled={submitting}>

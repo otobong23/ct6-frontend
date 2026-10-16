@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { useTranslation } from "react-i18next";
 
 export function PasswordField({
   placeholder,
@@ -14,6 +15,7 @@ export function PasswordField({
   onChange: (v: string) => void;
   error?: string;
 }) {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
   return (
@@ -29,13 +31,13 @@ export function PasswordField({
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? "Hide password" : "Show password"}
+          aria-label={visible ? t("Hide password") : t("Show password")}
           className="field-toggle"
         >
           <Icon icon={visible ? "fluent:eye-off-32-filled" : "fluent:eye-32-filled"} width="16" />
         </button>
       </div>
-      {error && <p className="field-error-text">{error}</p>}
+      {error && <p className="field-error-text">{t(error)}</p>}
     </div>
   );
 }

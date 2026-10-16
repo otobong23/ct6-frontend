@@ -1,3 +1,5 @@
+"use client";
+import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -6,6 +8,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { coins, coinIconColors } from "@/lib/coins";
 import { Logo } from "@/components/Logo";
 import Image from "next/image";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const actions = [
   { label: "Recharge", icon: "solar:money-bag-bold" },
@@ -19,34 +22,34 @@ const actions = [
 ];
 
 export default function HomePage() {
+  const { t } = useTranslation();
   return (
     <div className="dashboard-shell">
       <header className="dashboard-header">
         <h1 className="header-logo">
           <Logo width={40} />
         </h1>
-        <AccountMenu />
+        <div className="header-actions"><LanguageSelector compact /><AccountMenu /></div>
       </header>
 
       <section className="banner">
-        <p className="banner-eyebrow">Welcome CTSix</p>
-        <p className="banner-title">Make you first Investment today</p>
+        <p className="banner-eyebrow">{t("Welcome CTSix")}</p>
+        <p className="banner-title">{t("Make you first Investment today")}</p>
         <button type="button" className="banner-btn">
-          Invest Today
+          {t("Invest Today")}
         </button>
       </section>
 
       <section className="assets-card">
-        <span className="assets-pill">Total Assets</span>
-        <p className="assets-value">$134,876</p>
+        <span className="assets-pill">{t("Total Assets")}</span>
+        <p className="assets-value">{t("$134,876")}</p>
         <p className="assets-meta">
-          Return: <span className="text-accent mr-5">$3,000</span> NTP :{" "}
-          <span className="text-[#0AA521]">+2.30%</span>
+          {t("TWM")}: <span className="text-accent mr-5">{t("$3,000")}</span> {t("NTP")}: <span className="text-[#0AA521]">{t("+2.30%")}</span>
         </p>
         <div className="lang-chip-row hidden!">
-          <span className="lang-chip">English</span>
-          <span className="lang-chip">English</span>
-          <span className="lang-chip">English</span>
+          <span className="lang-chip">{t("English")}</span>
+          <span className="lang-chip">{t("French")}</span>
+          <span className="lang-chip">{t("Chinese")}</span>
         </div>
         <WalletChart />
       </section>
@@ -57,16 +60,16 @@ export default function HomePage() {
             <span className="action-icon">
               <Icon icon={icon} width="38" />
             </span>
-            {label}
+            {t(label)}
           </button>
         ))}
       </section>
 
       <section className="section-block">
         <div className="section-header">
-          <h2 className="section-title">Trending Portfolios</h2>
+          <h2 className="section-title">{t("Trending Portfolios")}</h2>
           <Link href="/home/portfolios" className="see-all-link">
-            See all
+            {t("See all")}
           </Link>
         </div>
 
@@ -85,7 +88,7 @@ export default function HomePage() {
               <div className="coin-value">
                 <p className="coin-price">{coin.price}</p>
                 {coin.addFunds ? (
-                  <p className="add-funds-link">+Add Funds</p>
+                  <p className="add-funds-link">+{t("Add Funds")}</p>
                 ) : (
                   <p className="coin-change">{coin.change}</p>
                 )}
@@ -94,7 +97,7 @@ export default function HomePage() {
           ))}
         </div>
 
-        <p className="footer-copyright">2026, CT6 Copyright</p>
+        <p className="footer-copyright">{t("2026, CT6 Copyright")}</p>
       </section>
 
       <BottomNav />

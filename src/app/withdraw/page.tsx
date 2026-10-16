@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { BackPill } from "@/components/AuthShell";
@@ -9,6 +10,7 @@ import { StatusOverlay } from "@/components/StatusOverlay";
 const quickAmounts = ["50", "100", "200", "500", "1000"];
 
 export default function WithdrawPage() {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState("");
   const [password, setPassword] = useState("");
   const [step, setStep] = useState<"form" | "result">("form");
@@ -27,20 +29,20 @@ export default function WithdrawPage() {
 
       {step === "form" && (
         <div className="panel-card">
-          <h2 className="panel-title">Withdraw</h2>
-          <p className="panel-subtitle">Enter exact Withdrawal amount below</p>
+          <h2 className="panel-title">{t("Withdraw")}</h2>
+          <p className="panel-subtitle">{t("Enter exact Withdrawal amount below")}</p>
           <form onSubmit={handleSubmit} className="stack">
             <div className="field">
-              <span className="field-prefix">$</span>
+              <span className="field-prefix">{t("$")}</span>
               <input
                 className="field-input"
-                placeholder="Enter Withdrawal amount"
+                placeholder={t("Enter Withdrawal amount")}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 inputMode="numeric"
               />
             </div>
-            <PasswordField placeholder="Create Password" value={password} onChange={setPassword} />
+            <PasswordField placeholder={t("Create Password")} value={password} onChange={setPassword} />
             <div className="quick-amount-row">
               {quickAmounts.map((a) => (
                 <button
@@ -54,7 +56,7 @@ export default function WithdrawPage() {
               ))}
             </div>
             <button type="submit" className="btn-primary">
-              Continue
+              {t("Continue")}
             </button>
           </form>
           <Remarks />
@@ -64,16 +66,16 @@ export default function WithdrawPage() {
       {step === "result" && result === "success" && (
         <StatusOverlay
           kind="success"
-          title="Withdrawal Successful"
-          subtitle="Your wallet will be credited within 72 hours"
+          title={t("Withdrawal Successful")}
+          subtitle={t("Your wallet will be credited within 72 hours")}
           onContinue={() => setStep("form")}
         />
       )}
       {step === "result" && result === "fail" && (
         <StatusOverlay
           kind="fail"
-          title="Failed"
-          subtitle="Something went wrong try again"
+          title={t("Failed")}
+          subtitle={t("Something went wrong try again")}
           onContinue={() => setStep("form")}
         />
       )}
@@ -82,16 +84,15 @@ export default function WithdrawPage() {
 }
 
 function Remarks() {
+  const { t } = useTranslation();
   return (
     <div className="remark-list">
-      <p className="remark-title">Remark</p>
+      <p className="remark-title">{t("Remark")}</p>
       <ol>
-        <li>Please do not add assets to accounts other than the official account, otherwise the assets will not be retrieved.</li>
-        <li>The Withdrawal amount must be exactly the same as the actual order amount.</li>
+        <li>{t("Please do not add assets to accounts other than the official account, otherwise the assets will not be retrieved.")}</li>
+        <li>{t("The Withdrawal amount must be exactly the same as the actual order amount.")}</li>
         <li>
-          The Withdrawal arrival time is based on the bank arrival time. It usually arrives
-          within 5-10 minutes. If it does not arrive after more than 48 hours, please contact the
-          manager for verification.
+          {t("withdrawalArrivalNote", { defaultValue: "The Withdrawal arrival time is based on the bank arrival time. It usually arrives within 5-10 minutes. If it does not arrive after more than 48 hours, please contact the manager for verification." })}
         </li>
       </ol>
     </div>

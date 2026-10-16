@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -22,6 +23,7 @@ type Errors = Partial<{
 }>;
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,27 +60,27 @@ export default function RegisterPage() {
   return (
     <AuthShell
       topSlot={<BackPill />}
-      title="Register"
-      subtitle="Create an account to continue!"
+      title={t("Register")}
+      subtitle={t("Create an account to continue!")}
       footer={
         <span className="text-muted">
-          Already have an account?{" "}
+          {t("Already have an account?")}{" "}
           <Link href="/login" className="link-accent" style={{ display: "inline" }}>
-            Login
+            {t("Login")}
           </Link>
         </span>
       }
     >
       <form onSubmit={handleSubmit} className="stack">
         <TextField
-          placeholder="Duke Margret"
+          placeholder={t("Duke Margret")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           error={errors.name}
         />
         <TextField
           type="email"
-          placeholder="Email"
+          placeholder={t("Email")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           error={errors.email}
@@ -94,32 +96,32 @@ export default function RegisterPage() {
               onChange={(e) => setCountryCode(e.target.value)}
               className="field-select"
             >
-              <option value="+1">+1</option>
-              <option value="+234">+234</option>
-              <option value="+44">+44</option>
+              <option value="+1">{t("+1")}</option>
+              <option value="+234">{t("+234")}</option>
+              <option value="+44">{t("+44")}</option>
             </select>
           }
         />
         <PasswordField
-          placeholder="Create Password"
+          placeholder={t("Create Password")}
           value={password}
           onChange={setPassword}
           error={errors.password}
         />
         <PasswordField
-          placeholder="Confirm Password"
+          placeholder={t("Confirm Password")}
           value={confirmPassword}
           onChange={setConfirmPassword}
           error={errors.confirmPassword}
         />
         <TextField
-          placeholder="Referal Code"
+          placeholder={t("Referal Code")}
           value={referral}
           onChange={(e) => setReferral(e.target.value)}
           error={errors.referral}
         />
 
-        <Button type="submit">Register</Button>
+        <Button type="submit">{t("Register")}</Button>
       </form>
     </AuthShell>
   );

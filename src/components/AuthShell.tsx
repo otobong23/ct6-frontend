@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { Logo } from "@/components/Logo";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 export function AuthShell({
   topSlot,
@@ -34,17 +36,16 @@ export function AuthShell({
 }
 
 export function BackPill({ href = "/login" }: { href?: string }) {
+  const { t } = useTranslation();
   return (
     <Link href={href} className="pill">
-      <Icon icon="heroicons-outline:arrow-narrow-left" width="14" /> Back
+      <Icon icon="heroicons-outline:arrow-narrow-left" width="14" /> {t("Back")}
     </Link>
   );
 }
 
 export function LanguagePill() {
   return (
-    <button type="button" className="pill">
-      <Icon icon="lucide:globe" width="14" /> English
-    </button>
+    <div className="pill"><Icon icon="lucide:globe" width="14" /> <LanguageSelector compact /></div>
   );
 }

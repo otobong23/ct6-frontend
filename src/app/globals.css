@@ -1223,6 +1223,34 @@ option {
   justify-content: space-between;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.language-selector select {
+  color: inherit;
+  background: #17172a;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.language-selector--compact select {
+  max-width: 105px;
+  padding: 6px 8px;
+}
+
+.pill .language-selector select {
+  border: 0;
+  background: transparent;
+  padding: 0 2px;
+}
+
 .header-logo {
   display: flex;
   align-items: center;

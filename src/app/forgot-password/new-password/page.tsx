@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthShell, BackPill } from "@/components/AuthShell";
@@ -9,6 +10,7 @@ import { Button } from "@/components/Button";
 const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 export default function NewPasswordPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -31,30 +33,30 @@ export default function NewPasswordPage() {
   return (
     <AuthShell
       topSlot={<BackPill />}
-      title="Reset password"
-      subtitle="Now set new security key"
+      title={t("Reset password")}
+      subtitle={t("Now set new security key")}
     >
       <form onSubmit={handleSubmit} className="stack">
         <div>
-          <p className="field-label">Set new password</p>
+          <p className="field-label">{t("Set new password")}</p>
           <PasswordField
-            placeholder="Confirm Password"
+            placeholder={t("Confirm Password")}
             value={password}
             onChange={setPassword}
             error={errors.password}
           />
         </div>
         <div>
-          <p className="field-label">Confirm password</p>
+          <p className="field-label">{t("Confirm password")}</p>
           <PasswordField
-            placeholder="Confirm Password"
+            placeholder={t("Confirm Password")}
             value={confirmPassword}
             onChange={setConfirmPassword}
             error={errors.confirmPassword}
           />
         </div>
 
-        <Button type="submit">Save</Button>
+        <Button type="submit">{t("Save")}</Button>
       </form>
     </AuthShell>
   );
