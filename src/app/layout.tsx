@@ -4,6 +4,7 @@ import "./globals.css";
 import "./minor.css";
 import { cn } from "@/lib/utils";
 import I18nProvider from "@/components/I18nProvider";
+import { Providers } from "./providers";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -26,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className={`page-bg ${montserrat.variable}`}><I18nProvider>{children}</I18nProvider></body>
+      <body className={`page-bg ${montserrat.variable}`}><Providers>{children}</Providers></body>
     </html>
   );
 }
