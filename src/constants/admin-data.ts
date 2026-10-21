@@ -138,6 +138,11 @@ export const adminNavLinks = [
     href: "/admin/users",
   },
   {
+    page: "Crews",
+    icon: "mdi:account-group-outline",
+    href: "/admin/crews",
+  },
+  {
     page: "All Stocks",
     icon: "mdi:chart-line-variant",
     href: "/admin/stocks",

@@ -123,9 +123,9 @@ export const adminApi = {
   crews: {
     total: () => api<number>("/admin/totalCrews"),
     list: (query?: AdminCrewQuery) => api<AdminCrewListResponse>(`/admin/crews${queryString(query)}`),
-    getUserCrew: (query: AdminUserCrewQuery) => api<CrewResponse>(`/admin/crew${queryString(query)}`),
+    getUserCrew: (query: AdminUserCrewQuery) => api<CrewResponse | null>(`/admin/crew${queryString(query)}`),
     search: (query: KeywordQuery) => api<CrewResponse[]>(`/admin/search/crews${queryString(query)}`),
-    detachUser: (data: DetachUserDto) => api<unknown>("/admin/detachUser", { method: "PATCH", ...jsonBody(data) }),
+    detachUser: (data: DetachUserDto) => api<ApiMessageResponse>("/admin/detachUser", { method: "PATCH", ...jsonBody(data) }),
   },
 };
 

@@ -18,6 +18,7 @@ export default function ResetPasswordVerifyPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (code.length === 6) {
+      sessionStorage.setItem("passwordResetCode", code);
       router.push("/forgot-password/new-password");
     }
   }

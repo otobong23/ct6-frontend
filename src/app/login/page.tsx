@@ -2,21 +2,27 @@
 
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthShell, LanguagePill } from "@/components/AuthShell";
 import { TextField } from "@/components/TextField";
 import { PasswordField } from "@/components/PasswordField";
 import { Button } from "@/components/Button";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [submitting, setSubmitting] = useState(false);
+  const [apiError, setApiError] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setApiError("");
     if (!email || !password) {
       setErrors({
         email: !email ? "Enter a valid email and password" : undefined,
@@ -25,13 +31,14 @@ export default function LoginPage() {
       return;
     }
     setSubmitting(true);
-    setTimeout(() => {
+    try {
+      await login(email.trim(), password);
       setSubmitting(false);
-      setErrors({
-        email: "Incorrect email and password combination",
-        password: "Incorrect email and password combination",
-      });
-    }, 600);
+      router.replace("/home");
+    } catch (error) {
+      setSubmitting(false);
+      setApiError(error instanceof Error ? error.message : "Unable to log in. Please try again.");
+    }
   }
 
   return (
@@ -49,6 +56,7 @@ export default function LoginPage() {
       }
     >
       <form onSubmit={handleSubmit} className="stack">
+        {apiError && <p role="alert" className="text-sm text-red-500">{apiError}</p>}
         <TextField
           type="email"
           placeholder={t("Email")}
@@ -70,7 +78,7 @@ export default function LoginPage() {
         </Link>
 
         <Button style={{ background: email && password ? "#68FF7F" : "#0AA521"}} type="submit" disabled={submitting}>
-          {submitting ? "Logging in…" : "Register"}
+          {submitting ? "Logging in…" : "Log in"}
         </Button>
       </form>
     </AuthShell>

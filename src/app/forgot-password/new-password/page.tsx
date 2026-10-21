@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { AuthShell, BackPill } from "@/components/AuthShell";
 import { PasswordField } from "@/components/PasswordField";
 import { Button } from "@/components/Button";
+import { authApi } from "@/lib/endpoints";
 
 const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
@@ -15,8 +16,10 @@ export default function NewPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string }>({});
+  const [apiError, setApiError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const next: typeof errors = {};
     if (!PASSWORD_RE.test(password))
@@ -26,7 +29,23 @@ export default function NewPasswordPage() {
       next.confirmPassword = "Password Dosen't match";
     setErrors(next);
     if (Object.keys(next).length === 0) {
-      router.push("/login");
+      const token = sessionStorage.getItem("passwordResetCode");
+      if (!token) {
+        setApiError("Your password reset session has expired. Request a new code.");
+        return;
+      }
+      setSubmitting(true);
+      setApiError("");
+      try {
+        await authApi.resetPassword({ token, newPassword: password });
+        sessionStorage.removeItem("passwordResetEmail");
+        sessionStorage.removeItem("passwordResetCode");
+        router.replace("/login?passwordReset=1");
+      } catch (error) {
+        setApiError(error instanceof Error ? error.message : "Could not reset password. Please request a new code.");
+      } finally {
+        setSubmitting(false);
+      }
     }
   }
 
@@ -37,6 +56,7 @@ export default function NewPasswordPage() {
       subtitle={t("Now set new security key")}
     >
       <form onSubmit={handleSubmit} className="stack">
+        {apiError && <p role="alert" className="text-sm text-red-500">{apiError}</p>}
         <div>
           <p className="field-label">{t("Set new password")}</p>
           <PasswordField
@@ -56,7 +76,7 @@ export default function NewPasswordPage() {
           />
         </div>
 
-        <Button type="submit">{t("Save")}</Button>
+        <Button type="submit" disabled={submitting}>{submitting ? "Saving…" : t("Save")}</Button>
       </form>
     </AuthShell>
   );

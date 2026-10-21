@@ -8,6 +8,7 @@ import { AuthShell, BackPill } from "@/components/AuthShell";
 import { TextField } from "@/components/TextField";
 import { PasswordField } from "@/components/PasswordField";
 import { Button } from "@/components/Button";
+import { useAuth } from "@/context/AuthContext";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{7,15}$/;
@@ -25,6 +26,7 @@ type Errors = Partial<{
 export default function RegisterPage() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { register } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -33,6 +35,8 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [referral, setReferral] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [apiError, setApiError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   function validate(): Errors {
     const next: Errors = {};
@@ -48,12 +52,29 @@ export default function RegisterPage() {
     return next;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const next = validate();
     setErrors(next);
+    setApiError("");
     if (Object.keys(next).length === 0) {
-      router.push("/verify-email");
+      setSubmitting(true);
+      try {
+        const [firstName, ...lastNameParts] = name.trim().split(/\s+/);
+        await register({
+          email: email.trim(),
+          password,
+          firstName,
+          lastName: lastNameParts.join(" "),
+          phone: `${countryCode}${phone.replace(/\D/g, "")}`,
+          referral_code: referral.trim(),
+        });
+        router.replace("/home");
+      } catch (error) {
+        setApiError(error instanceof Error ? error.message : "Unable to create your account. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
     }
   }
 
@@ -72,6 +93,7 @@ export default function RegisterPage() {
       }
     >
       <form onSubmit={handleSubmit} className="stack">
+        {apiError && <p role="alert" className="text-sm text-red-500">{apiError}</p>}
         <TextField
           placeholder={t("Duke Margret")}
           value={name}
@@ -121,7 +143,7 @@ export default function RegisterPage() {
           error={errors.referral}
         />
 
-        <Button type="submit">{t("Register")}</Button>
+        <Button type="submit" disabled={submitting}>{submitting ? "Creating account…" : t("Register")}</Button>
       </form>
     </AuthShell>
   );

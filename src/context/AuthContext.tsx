@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { adminApi, authApi, userApi } from "@/lib/endpoints";
 import type { UserProfile, AuthResponse } from "@/lib/types";
 
-type AuthContextValue = { user: UserProfile | null; loading: boolean; login: (email: string, password: string, admin?: boolean) => Promise<void>; signInWithGoogle: (idToken: string) => Promise<void>; signInWithApple: () => Promise<void>; logout: () => Promise<void>; refreshProfile: () => Promise<void> };
+type AuthContextValue = { user: UserProfile | null; loading: boolean; register: (data: Parameters<typeof authApi.signup>[0]) => Promise<void>; login: (email: string, password: string, admin?: boolean) => Promise<void>; signInWithGoogle: (idToken: string) => Promise<void>; signInWithApple: () => Promise<void>; logout: () => Promise<void>; refreshProfile: () => Promise<void> };
 const AuthContext = createContext<AuthContextValue | null>(null);
 const persist = (result: AuthResponse, isAdmin = false) => {
   if (isAdmin) {
@@ -124,6 +124,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     await refreshProfile().catch(() => {});
   };
+  const register = async (data: Parameters<typeof authApi.signup>[0]) => {
+    const result = await authApi.signup(data);
+    persist(result);
+    localStorage.setItem("isAdmin", "false");
+    if (result.user) {
+      setUser({
+        _id: result.user._id,
+        userID: result.user.userID,
+        email: result.user.email,
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        balance: 0,
+        totalWithdraw: 0,
+        totalDeposit: 0,
+        transactionCount: 0,
+        isSuspended: false,
+        isAdmin: false,
+      });
+    }
+    await refreshProfile().catch(() => {});
+  };
   const completeProviderSignIn = async (result: AuthResponse) => { persist(result, false); localStorage.setItem("isAdmin", "false"); await refreshProfile(); };
 
   const loadScript = (src: string, id: string) => new Promise<void>((resolve, reject) => { if (document.getElementById(id)) return resolve(); const script = document.createElement("script"); script.id = id; script.src = src; script.async = true; script.onload = () => resolve(); script.onerror = () => reject(new Error("Could not load the identity provider")); document.head.appendChild(script); });
@@ -146,6 +167,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
   const logout = async () => { try { await authApi.logout(); } finally { localStorage.removeItem("accessToken"); localStorage.removeItem("refreshToken"); localStorage.removeItem("adminAccessToken"); localStorage.removeItem("adminRefreshToken"); localStorage.removeItem("isAdmin"); setUser(null); } };
 
-  return <AuthContext.Provider value={{ user, loading, login, signInWithGoogle, signInWithApple, logout, refreshProfile }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, register, login, signInWithGoogle, signInWithApple, logout, refreshProfile }}>{children}</AuthContext.Provider>;
 }
 export function useAuth() { const value = useContext(AuthContext); if (!value) throw new Error("useAuth must be used within AuthProvider"); return value; }
