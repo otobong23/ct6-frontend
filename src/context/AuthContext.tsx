@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser((prev) => prev ?? {
           _id: "admin",
           userID: "ADMIN",
-          email: "admin@pennystocks.com",
+          email: "bonifacemiracle23@gmail.com",
           firstName: "Super",
           lastName: "Admin",
           balance: 0,

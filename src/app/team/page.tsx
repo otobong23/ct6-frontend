@@ -20,7 +20,7 @@ export default function TeamPage() {
 
       <div className="referral-hero">
         <div className="referral-profile">
-          <Image src={profileImage} alt={t("Profile")} className="object-cover w-full" />
+          <Image src={profileImage} alt={t("Profile")} loading="eager" className="object-cover w-full" />
         </div>
         <div className="qr-placeholder">
           <QR_codeGenerator value={QR_codeValue} />

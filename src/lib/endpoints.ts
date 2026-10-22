@@ -62,6 +62,9 @@ function jsonBody(data: unknown): Pick<RequestInit, "headers" | "body"> {
 
 export const authApi = {
   signup: (data: SignUpDto) => api<AuthResponse>("/auth/signup", { method: "POST", ...jsonBody(data) }),
+  sendVerificationCode: (data: { email: string }) => api<ApiMessageResponse>("/auth/send-verification-code", { method: "POST", ...jsonBody(data) }),
+  resendVerificationCode: (data: { email: string }) => api<ApiMessageResponse>("/auth/resend-verification-code", { method: "POST", ...jsonBody(data) }),
+  verifyEmail: (data: { email: string; code: string }) => api<ApiMessageResponse>("/auth/verify-email", { method: "POST", ...jsonBody(data) }),
   login: (data: LoginDto) => api<AuthResponse>("/auth/login", { method: "POST", ...jsonBody(data) }),
   googleSignIn: (data: ProviderSignInDto) => api<AuthResponse>("/auth/google", { method: "POST", ...jsonBody(data) }),
   appleSignIn: (data: ProviderSignInDto) => api<AuthResponse>("/auth/apple", { method: "POST", ...jsonBody(data) }),

@@ -12,7 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\d{7,15}$/;
-const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
 
 type Errors = Partial<{
   name: string;
@@ -45,10 +45,9 @@ export default function RegisterPage() {
     if (!PHONE_RE.test(phone)) next.phone = "The phone number you entered is invalid";
     if (!PASSWORD_RE.test(password))
       next.password =
-        "Password must be eight characters or above, must also contain upper case, lowercase and special characters";
+        "Password must be six characters or above, must also contain upper case, lowercase and special characters";
     if (confirmPassword !== password || !confirmPassword)
       next.confirmPassword = "Password Dosen't match";
-    if (!referral.trim()) next.referral = "Referal cannot be empty";
     return next;
   }
 
@@ -69,7 +68,7 @@ export default function RegisterPage() {
           phone: `${countryCode}${phone.replace(/\D/g, "")}`,
           referral_code: referral.trim(),
         });
-        router.replace("/home");
+        router.replace(`/verify-email?email=${encodeURIComponent(email.trim())}`);
       } catch (error) {
         setApiError(error instanceof Error ? error.message : "Unable to create your account. Please try again.");
       } finally {
@@ -140,7 +139,7 @@ export default function RegisterPage() {
           placeholder={t("Referal Code")}
           value={referral}
           onChange={(e) => setReferral(e.target.value)}
-          error={errors.referral}
+          // error={errors.referral}
         />
 
         <Button type="submit" disabled={submitting}>{submitting ? "Creating account…" : t("Register")}</Button>
