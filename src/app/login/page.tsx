@@ -48,7 +48,7 @@ export default function LoginPage() {
       subtitle={t("Enter valid email and password")}
       footer={
         <span className="text-muted">
-          {t("Don&apos;t have an account?")}{" "}
+          {t("Don't have an account?")}{" "}
           <Link href="/register" className="link-accent" style={{ display: "inline" }}>
             {t("Sign up")}
           </Link>

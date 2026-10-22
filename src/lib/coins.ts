@@ -22,21 +22,6 @@ export const coins: Coin[] = [
   { icon: cardano, symbol: "ADA", name: "Cardano", price: "$134,876", change: "+2.30%" },
   { icon: tron, symbol: "TRX", name: "TRON", price: "$134,876", change: "+2.30%" },
   { icon: tether, symbol: "USDT", name: "Tether", price: "$134,876", change: "+2.30%" },
-  ...Array.from({ length: 14 }, () => ({
-    icon: doge,
-    symbol: "DOGE",
-    name: "Dogecoin",
-    price: "$134,876",
-    change: "+2.30%",
-  })),
+  { icon: doge, symbol: "DOGE", name: "Dogecoin", price: "$134,876",change: "+2.30%",
+  }
 ];
-
-export const coinIconColors: Record<string, string> = {
-  BTC: "#f7931a",
-  ETH: "#8b8bf5",
-  BAND: "#516aff",
-  ADA: "#2461e8",
-  TRX: "#e0342c",
-  USDT: "#26a17b",
-  DOGE: "#d4a017",
-};

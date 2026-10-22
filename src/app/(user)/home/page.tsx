@@ -5,20 +5,20 @@ import { Icon } from "@iconify/react";
 import { AccountMenu } from "@/components/AccountMenu";
 import { WalletChart } from "@/components/WalletCharts";
 import { BottomNav } from "@/components/BottomNav";
-import { coins, coinIconColors } from "@/lib/coins";
+import { coins } from "@/lib/coins";
 import { Logo } from "@/components/Logo";
 import Image from "next/image";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
 const actions = [
-  { label: "Recharge", icon: "solar:money-bag-bold" },
-  { label: "withdraw", icon: "ion:card" },
-  { label: "Help", icon: "streamline-plump:customer-support-3-solid" },
-  { label: "Team", icon: "fluent:people-team-28-filled" },
-  { label: "My bank", icon: "mingcute:bank-fill" },
-  { label: "AI Trade", icon: "ic:round-candlestick-chart" },
-  { label: "Portfolio", icon: "basil:stack-solid" },
-  { label: "The How", icon: "mingcute:presentation-1-fill" },
+  { label: "Recharge", icon: "solar:money-bag-bold", link: "/models" },
+  { label: "withdraw", icon: "ion:card", link: "/withdraw" },
+  { label: "Help", icon: "streamline-plump:customer-support-3-solid", link: "/profile/help" },
+  { label: "Team", icon: "fluent:people-team-28-filled", link: "/team" },
+  { label: "My bank", icon: "mingcute:bank-fill", link: "/profile/bank-details" },
+  { label: "AI Trade", icon: "ic:round-candlestick-chart", link: "/ai-trade" },
+  { label: "Portfolio", icon: "basil:stack-solid", link: "/team" },
+  { label: "The How", icon: "mingcute:presentation-1-fill", link: "/profile/how-it-works" },
 ];
 
 export default function HomePage() {
@@ -55,13 +55,13 @@ export default function HomePage() {
       </section>
 
       <section className="action-grid">
-        {actions.map(({ label, icon }) => (
-          <button type="button" key={label} className="action-item">
+        {actions.map(({ label, icon, link }) => (
+          <Link href={link} type="button" key={label} className="action-item">
             <span className="action-icon">
               <Icon icon={icon} width="38" />
             </span>
             {t(label)}
-          </button>
+          </Link>
         ))}
       </section>
 
