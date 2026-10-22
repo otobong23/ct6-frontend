@@ -16,7 +16,7 @@ const montserrat = Montserrat({
 })
 
 export const metadata: Metadata = {
-  title: "CT6 — Auth",
+  title: "CT6",
   description: "Log in, register, and password recovery flow for CT6",
 };
 
