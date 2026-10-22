@@ -35,9 +35,9 @@ export default function HomePage() {
       <section className="banner">
         <p className="banner-eyebrow">{t("Welcome CTSix")}</p>
         <p className="banner-title">{t("Make you first Investment today")}</p>
-        <button type="button" className="banner-btn">
+        <Link href="/deposit" type="button" className="banner-btn">
           {t("Invest Today")}
-        </button>
+        </Link>
       </section>
 
       <section className="assets-card">
