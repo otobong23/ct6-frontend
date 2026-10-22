@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { useAdminUsers } from "@/hooks/queries/useAdminUsers";
 import { useToggleUserSuspend } from "@/hooks/queries/useAdminActions";
-import type { ApiUser } from "@/lib/types";
+import type { UserProfile } from "@/lib/types";
 import { formatUSD } from "@/lib/admin-format";
 
 type StatusFilter = "all" | "active" | "suspended";
@@ -14,7 +14,7 @@ export default function UsersPage() {
   const router = useRouter();
   const { data: usersResponse, isLoading } = useAdminUsers();
   const toggleSuspend = useToggleUserSuspend();
-  const users: ApiUser[] = usersResponse?.data ?? [];
+  const users: UserProfile[] = usersResponse?.data ?? [];
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
