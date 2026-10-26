@@ -1,6 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 export function StatusOverlay({
@@ -8,6 +9,7 @@ export function StatusOverlay({
   title,
   subtitle,
   confirmRows,
+  children,
   onContinue,
   onCancel,
 }: {
@@ -15,6 +17,7 @@ export function StatusOverlay({
   title: string;
   subtitle?: string;
   confirmRows?: { label: string; value: string }[];
+  children?: ReactNode;
   onContinue: () => void;
   onCancel?: () => void;
 }) {
@@ -34,6 +37,8 @@ export function StatusOverlay({
         )}
         <h3 className="overlay-title">{title}</h3>
         {subtitle && <p className="overlay-subtitle">{subtitle}</p>}
+
+        {children}
 
         {confirmRows && (
           <div className="overlay-rows">

@@ -80,6 +80,10 @@ export const userApi = {
     update: (data: UpdateProfileDto) => api<UserProfile>("/user/profile", { method: "PATCH", ...jsonBody(data) }),
     deleteAccount: () => api<ApiMessageResponse>("/user/account", { method: "DELETE" }),
   },
+  walletPassword: {
+    create: (data: { newPassword: string }) => api<SuccessMessageResponse>("/user/wallet-password", { method: "POST", ...jsonBody(data) }),
+    change: (data: { currentPassword: string; newPassword: string }) => api<SuccessMessageResponse>("/user/wallet-password", { method: "PATCH", ...jsonBody(data) }),
+  },
   crew: { get: () => api<CrewResponse | null>("/crew") },
 };
 

@@ -9,13 +9,14 @@ import { coins } from "@/lib/coins";
 import { Logo } from "@/components/Logo";
 import Image from "next/image";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useAuth } from "@/context/AuthContext";
 
 const actions = [
   { label: "Recharge", icon: "solar:money-bag-bold", link: "/models" },
   { label: "withdraw", icon: "ion:card", link: "/withdraw" },
   { label: "Help", icon: "streamline-plump:customer-support-3-solid", link: "/profile/help" },
   { label: "Team", icon: "fluent:people-team-28-filled", link: "/team" },
-  { label: "My bank", icon: "mingcute:bank-fill", link: "/profile/bank-details" },
+  { label: "Profile settings", icon: "solar:settings-bold", link: "/profile/bank-details" },
   { label: "AI Trade", icon: "ic:round-candlestick-chart", link: "/ai-trade" },
   { label: "Portfolio", icon: "basil:stack-solid", link: "/team" },
   { label: "The How", icon: "mingcute:presentation-1-fill", link: "/profile/how-it-works" },
@@ -23,6 +24,8 @@ const actions = [
 
 export default function HomePage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const money = (amount: number | undefined) => new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(amount ?? 0);
   return (
     <div className="dashboard-shell">
       <header className="dashboard-header">
@@ -42,9 +45,10 @@ export default function HomePage() {
 
       <section className="assets-card">
         <span className="assets-pill">{t("Total Assets")}</span>
-        <p className="assets-value">{t("$134,876")}</p>
+        <p className="assets-value">{money(user?.balance)}</p>
         <p className="assets-meta">
-          {t("TWM")}: <span className="text-accent mr-5">{t("$3,000")}</span> {t("NTP")}: <span className="text-[#0AA521]">{t("+2.30%")}</span>
+          {t("Total Deposit:")} <span className="text-accent mr-5">{money(user?.totalDeposit)}</span>
+          {t("Total Withdrawal:")} <span className="text-[#0AA521]">{money(user?.totalWithdraw)}</span>
         </p>
         <div className="lang-chip-row hidden!">
           <span className="lang-chip">{t("English")}</span>
@@ -88,7 +92,7 @@ export default function HomePage() {
               <div className="coin-value">
                 <p className="coin-price">{coin.price}</p>
                 {coin.addFunds ? (
-                  <p className="add-funds-link">+{t("Add Funds")}</p>
+                  <Link href="/deposit" className="add-funds-link">+{t("Add Funds")}</Link>
                 ) : (
                   <p className="coin-change">{coin.change}</p>
                 )}

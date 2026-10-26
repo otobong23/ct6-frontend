@@ -1,81 +1,68 @@
+// Group the signed-in user's crew members by referral level.
+
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { Icon } from "@iconify/react";
-import { PageHeader } from "@/components/PageHeader";
 import { BackPill } from "@/components/AuthShell";
-import { members } from "@/lib/team";
+import { PageHeader } from "@/components/PageHeader";
+import { userApi } from "@/lib/endpoints";
+import type { AdminCrewMember, CrewResponse } from "@/lib/types";
 
 const levels = [1, 2, 3] as const;
 
 export default function TeamViewPage() {
   const { t } = useTranslation();
   const [level, setLevel] = useState<1 | 2 | 3>(1);
+  const [crew, setCrew] = useState<CrewResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    userApi.crew.get()
+      .then((response) => { if (!cancelled) setCrew(response); })
+      .catch((requestError) => { if (!cancelled) setError(requestError instanceof Error ? requestError.message : t("Could not load your team")); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [t]);
+
+  const members: AdminCrewMember[] = crew?.members?.[`level_${level}`] ?? crew?.[`level_${level}`] ?? [];
+  const money = (amount: number) => new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(amount);
 
   return (
     <div className="dashboard-shell">
       <PageHeader right={<BackPill href="/team" />} />
-
       <div className="panel-section">
         <div className="panel-card--center mb-10.75">
           <span className="assets-pill">{t("Team Deposit")}</span>
-          <p className="assets-value">{t("$134,876,890")}</p>
-          <p className="assets-meta">
-            {t("Total Withdrawal:")} <span className="text-accent">{t("$97,094,000")}</span>
-          </p>
+          <p className="assets-value">{money(crew?.totalCrewDeposits ?? 0)}</p>
+          <p className="assets-meta">{t("Total Withdrawal:")} <span className="text-accent">{money(crew?.totalCrewWithdrawals ?? 0)}</span></p>
           <div className="level-tabs">
-            {levels.map((l) => (
-              <button
-                key={l}
-                type="button"
-                className={`level-tab ${level === l ? "level-tab--active" : ""}`}
-                onClick={() => setLevel(l)}
-              >
-                {t("Level")} {l}
+            {levels.map((currentLevel) => (
+              <button key={currentLevel} type="button" className={`level-tab ${level === currentLevel ? "level-tab--active" : ""}`} onClick={() => setLevel(currentLevel)}>
+                {t("Level")} {currentLevel} ({crew?.members?.[`level_${currentLevel}`]?.length ?? crew?.[`level_${currentLevel}`]?.length ?? 0})
               </button>
             ))}
           </div>
         </div>
 
-        <div className="member-list panel-card">
-          {level === 1 && members.map((m, i) => (
-            <div className="member-row" key={i}>
-              <span className="member-avatar">
-                <Icon icon="lucide:user" width="18" />
-                <span className="member-dot" />
-              </span>
-              <div>
-                <p className="member-email">{m.email}</p>
-                <p className="member-id">{t("ID:")}{m.id}</p>
+        {loading && <p className="text-muted text-center">{t("Loading...")}</p>}
+        {error && <p className="field-error-text" role="alert">{error}</p>}
+        {!loading && !error && members.length === 0 && <p className="text-muted text-center">{t("No members at this level")}</p>}
+        {!loading && !error && members.length > 0 && <div className="member-list panel-card">
+          {members.map((member) => (
+            <div className="member-row" key={member.userID}>
+              <span className="member-avatar"><Icon icon="lucide:user" width="18" /><span className="member-dot" /></span>
+              <div className="min-w-0 flex-1">
+                <p className="member-email">{member.email}</p>
+                <p className="member-id">{t("ID:")}{member.userID}</p>
+                <p className="text-muted text-xs">{t("Team Deposit")}: {money(member.totalDeposits)} · {t("Total Withdrawal:")} {money(member.totalWithdrawals)}</p>
               </div>
             </div>
           ))}
-          {level === 2 && members.map((m, i) => (
-            <div className="member-row" key={i}>
-              <span className="member-avatar">
-                <Icon icon="lucide:user" width="18" />
-                <span className="member-dot" />
-              </span>
-              <div>
-                <p className="member-email">{m.email}</p>
-                <p className="member-id">{t("ID:")}{m.id}</p>
-              </div>
-            </div>
-          ))}
-          {level === 3 && members.map((m, i) => (
-            <div className="member-row" key={i}>
-              <span className="member-avatar">
-                <Icon icon="lucide:user" width="18" />
-                <span className="member-dot" />
-              </span>
-              <div>
-                <p className="member-email">{m.email}</p>
-                <p className="member-id">{t("ID:")}{m.id}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        </div>}
       </div>
     </div>
   );

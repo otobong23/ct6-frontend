@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthShell, BackPill } from "@/components/AuthShell";
@@ -37,6 +37,11 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<Errors>({});
   const [apiError, setApiError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const referralCode = new URLSearchParams(window.location.search).get("referral_code");
+    if (referralCode) setReferral(referralCode);
+  }, []);
 
   function validate(): Errors {
     const next: Errors = {};

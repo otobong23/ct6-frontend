@@ -16,10 +16,10 @@ export interface AuthResponse extends SuccessMessageResponse { accessToken: stri
 export interface ForgotPasswordResponse extends SuccessMessageResponse { resetToken?: string }
 
 // Profile request DTOs and response
-export interface UpdateProfileDto { firstName?: string; lastName?: string; profileImage?: string }
+export interface UpdateProfileDto { firstName?: string; lastName?: string; phone?: string; profileImage?: string }
 export interface UserProfile {
   _id: string; userID: string; email: string; firstName: string; lastName: string; isAdmin?: boolean; 
-  phone?: string; profileImage?: string; walletAddress?: string; walletPassword?: string; balance: number;
+  phone?: string; profileImage?: string; walletAddress?: string; balance: number;
   totalWithdraw: number; totalDeposit: number; transactionCount: number; isSuspended: boolean;
   createdAt?: string; updatedAt?: string
 }
@@ -36,7 +36,7 @@ export interface TransactionResponse {
 export interface EarnerResponse { _id: string; userId: string; copyTradePurchaseId: string; dailyAveragePercentage: number; amountInvested: number; nextEarningAmount: number; nextEarningDate: string; expiresAt: string; status: "active" | "completed" | "cancelled"; lastEarningDate?: string }
 export interface GetActiveEarnerResponse { success: boolean; earners: EarnerResponse[] }
 export interface CreateUserOrderDto { amount: number }
-export interface WithdrawDto { amount: number; walletAddress?: string }
+export interface WithdrawDto { amount: number; walletAddress?: string; walletPassword: string }
 export interface UserOrderResponse {
   _id: string; invoiceId: string; email: string; displayAmount: number; expectedAmount?: number;
   status: "pending" | "completed" | "failed"; coin: string; network: "BEP20" | "TRC20";

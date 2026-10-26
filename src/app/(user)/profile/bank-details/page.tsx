@@ -1,41 +1,66 @@
 "use client";
 
+import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { PageHeader } from "@/components/PageHeader";
 import { BackPill } from "@/components/AuthShell";
-import { TextField } from "@/components/TextField";
-import { PasswordField } from "@/components/PasswordField";
 import { Button } from "@/components/Button";
+import { PageHeader } from "@/components/PageHeader";
+import { TextField } from "@/components/TextField";
+import { useAuth } from "@/context/AuthContext";
+import { userApi } from "@/lib/endpoints";
 
-export default function BankDetailsPage() {
+export default function ProfileSettingsPage() {
   const { t } = useTranslation();
-  const [bankName, setBankName] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [accountName, setAccountName] = useState("");
-  const [password, setPassword] = useState("");
+  const { user, refreshProfile } = useAuth();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  useEffect(() => {
+    setFirstName(user?.firstName ?? "");
+    setLastName(user?.lastName ?? "");
+    setPhone(user?.phone ?? "");
+  }, [user]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaving(true);
+    setError("");
+    setSaved(false);
+    try {
+      await userApi.profile.update({ firstName: firstName.trim(), lastName: lastName.trim(), phone: phone.trim() });
+      await refreshProfile();
+      setSaved(true);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : t("Could not update profile"));
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <div className="dashboard-shell">
       <PageHeader right={<BackPill href="/profile" />} />
+      <h1 className="section-title" style={{ marginTop: 20 }}>{t("Profile settings")}</h1>
       <form onSubmit={handleSubmit} className="stack" style={{ marginTop: 20 }}>
-        <TextField placeholder={t("Enter Bank name")} value={bankName} onChange={(e) => setBankName(e.target.value)} />
-        <TextField
-          placeholder={t("Enter account number")}
-          value={accountNumber}
-          onChange={(e) => setAccountNumber(e.target.value)}
-        />
-        <TextField
-          placeholder={t("Enter account name")}
-          value={accountName}
-          onChange={(e) => setAccountName(e.target.value)}
-        />
-        <PasswordField placeholder={t("Create Password")} value={password} onChange={setPassword} />
-        <Button type="submit">{t("Save")}</Button>
+        <div>
+          <p className="field-label">{t("First name")}</p>
+          <TextField autoComplete="given-name" placeholder={t("First name")} value={firstName} onChange={(event) => setFirstName(event.target.value)} required />
+        </div>
+        <div>
+          <p className="field-label">{t("Last name")}</p>
+          <TextField autoComplete="family-name" placeholder={t("Last name")} value={lastName} onChange={(event) => setLastName(event.target.value)} />
+        </div>
+        <div>
+          <p className="field-label">{t("Phone number")}</p>
+          <TextField autoComplete="tel" type="tel" placeholder={t("Phone number")} value={phone} onChange={(event) => setPhone(event.target.value)} />
+        </div>
+        {error && <p className="field-error-text" role="alert">{error}</p>}
+        {saved && <p role="status">{t("Profile updated successfully")}</p>}
+        <Button type="submit" disabled={saving}>{saving ? t("Saving...") : t("Save")}</Button>
       </form>
     </div>
   );
