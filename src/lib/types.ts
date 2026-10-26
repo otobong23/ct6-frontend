@@ -33,8 +33,8 @@ export interface TransactionResponse {
   type: TransactionType | "withdrawal" | "bonus"; status: TransactionStatus; amount: number;
   currency: string; reference?: string; note?: string; createdAt: string;
 }
-export interface EarnerResponse { _id: string; userID: string; status: "pending" | "completed" | "failed"; daily_rate: number; expiresAt: string }
-export type CreateEarnerResponse = { success: true; newEarner: EarnerResponse } | undefined;
+export interface EarnerResponse { _id: string; userId: string; copyTradePurchaseId: string; dailyAveragePercentage: number; amountInvested: number; nextEarningAmount: number; nextEarningDate: string; expiresAt: string; status: "active" | "completed" | "cancelled"; lastEarningDate?: string }
+export interface GetActiveEarnerResponse { success: boolean; earners: EarnerResponse[] }
 export interface CreateUserOrderDto { amount: number }
 export interface WithdrawDto { amount: number; walletAddress?: string }
 export interface UserOrderResponse {
@@ -50,7 +50,7 @@ export interface WithdrawResponse extends ApiMessageResponse { newTransaction: T
 export type RiskLevel = "low" | "medium" | "high";
 export interface CreateCopyTradingDto {
   traderName: string; riskLevel: RiskLevel; leverage: number; winrate: number; country?: string;
-  last_10_trades?: number[]; duration: string; dailyAverageProfit: number; purchases: number; totalAssets: number; price: number;
+  last_10_trades?: number[]; duration: string; dailyAveragePercentage: number; purchases: number; totalAssets: number; minInvestment: number; maxInvestment: number;
 }
 export type UpdateCopyTradingDto = Partial<CreateCopyTradingDto>;
 export interface BuyCopyTradingDto { amountInvested: number }
@@ -59,8 +59,8 @@ export interface CopyTradingResponse extends CreateCopyTradingDto { _id: string;
 export type CopyTradePurchaseStatus = "active" | "liquidated" | "expired";
 export interface CopyTradePurchaseResponse {
   _id: string; userId: string; copyTradingId: string | CopyTradingResponse; traderName: string; riskLevel: RiskLevel;
-  duration: string; dailyAverageProfit: number; leverage: number; winrate: number; pnl: number; purchases: number;
-  totalAssets: number; price: number; amountInvested: number; currency: string; expiredAt: string;
+  duration: string; dailyAveragePercentage: number; leverage: number; winrate: number; pnl: number; purchases: number;
+  totalAssets: number; minInvestment: number; maxInvestment: number; amountInvested: number; currency: string; expiredAt: string;
   status: CopyTradePurchaseStatus; liquidatedAt?: string; liquidationAmount?: number; liquidationFee?: number;
 }
 export interface CopyTradeActionResponse { purchase: CopyTradePurchaseResponse; transaction: TransactionResponse }
@@ -114,7 +114,6 @@ export interface EndpointResponses {
   "user.transactions.create": TransactionResponse;
   "user.transactions.list": UserTransactionListResponse;
   "user.transactions.get": TransactionResponse;
-  "user.transactions.createEarner": CreateEarnerResponse;
   "user.transactions.orders.generateDepositAddress": DepositAddressResponse;
   "user.transactions.orders.confirmDeposit": DepositConfirmationResponse;
   "user.transactions.orders.withdraw": WithdrawResponse;
