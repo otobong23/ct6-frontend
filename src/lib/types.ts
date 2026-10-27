@@ -29,10 +29,11 @@ export type TransactionType = "deposit" | "withdraw" | "profit" | "loss" | "buy"
 export type TransactionStatus = "pending" | "completed" | "rejected" | "failed";
 export interface CreateTransactionDto { type: TransactionType; amount: number; currency?: string; reference?: string; note?: string }
 export interface TransactionResponse {
-  _id: string; transactionID: string; userId: string; email: string;
+  _id: string; transactionID: string; userId: string | TransactionUserRef; email: string;
   type: TransactionType | "withdrawal" | "bonus"; status: TransactionStatus; amount: number;
-  currency: string; reference?: string; note?: string; createdAt: string;
+  currency: string; reference?: string; withdrawWalletAddress?: string; note?: string; createdAt: string;
 }
+export interface TransactionUserRef { _id: string; userID?: string; email?: string; firstName?: string; lastName?: string }
 export interface EarnerResponse { _id: string; userId: string; copyTradePurchaseId: string; dailyAveragePercentage: number; amountInvested: number; nextEarningAmount: number; nextEarningDate: string; expiresAt: string; status: "active" | "completed" | "cancelled"; lastEarningDate?: string }
 export interface GetActiveEarnerResponse { success: boolean; earners: EarnerResponse[] }
 export interface CreateUserOrderDto { amount: number }
@@ -58,7 +59,7 @@ export interface LiquidateCopyTradingDto { note?: string }
 export interface CopyTradingResponse extends CreateCopyTradingDto { _id: string; currency: string; createdAt?: string; updatedAt?: string }
 export type CopyTradePurchaseStatus = "active" | "liquidated" | "expired";
 export interface CopyTradePurchaseResponse {
-  _id: string; userId: string; copyTradingId: string | CopyTradingResponse; traderName: string; riskLevel: RiskLevel;
+  _id: string; userId: string | TransactionUserRef; copyTradingId: string | CopyTradingResponse; traderName: string; riskLevel: RiskLevel;
   duration: string; dailyAveragePercentage: number; leverage: number; winrate: number; pnl: number; purchases: number;
   totalAssets: number; minInvestment: number; maxInvestment: number; amountInvested: number; currency: string; expiredAt: string;
   status: CopyTradePurchaseStatus; liquidatedAt?: string; liquidationAmount?: number; liquidationFee?: number;

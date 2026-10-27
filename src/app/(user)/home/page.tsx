@@ -16,9 +16,9 @@ const actions = [
   { label: "withdraw", icon: "ion:card", link: "/withdraw" },
   { label: "Help", icon: "streamline-plump:customer-support-3-solid", link: "/profile/help" },
   { label: "Team", icon: "fluent:people-team-28-filled", link: "/team" },
-  { label: "Profile settings", icon: "solar:settings-bold", link: "/profile/bank-details" },
+  { label: "Profile", icon: "solar:settings-bold", link: "/profile/bank-details" },
   { label: "AI Trade", icon: "ic:round-candlestick-chart", link: "/ai-trade" },
-  { label: "Portfolio", icon: "basil:stack-solid", link: "/team" },
+  { label: "My trades", icon: "mdi:chart-timeline-variant", link: "/copy-trading" },
   { label: "The How", icon: "mingcute:presentation-1-fill", link: "/profile/how-it-works" },
 ];
 

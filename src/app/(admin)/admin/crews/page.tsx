@@ -126,27 +126,40 @@ export default function AdminCrewsPage() {
       )}
 
       <section className="overflow-hidden rounded-2xl border border-[#252f45] bg-[#151d2d]">
-        <div className="grid grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(5rem,1fr))_auto] gap-3 border-b border-[#252f45] px-4 py-3 text-xs font-semibold uppercase tracking-wide text-penny-text-muted sm:px-5">
-          <span>Crew owner</span><span>Members</span><span>Deposits</span><span>Withdrawals</span><span> </span>
-        </div>
         {isLoading ? (
           <div className="p-8 text-center text-sm text-penny-text-muted">Loading crews…</div>
         ) : crews.length === 0 ? (
           <div className="p-8 text-center text-sm text-penny-text-muted">{activeSearch ? "No matching crews." : "No crews found."}</div>
-        ) : crews.map((crew) => (
-          <article key={crew.userID} className="grid grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(5rem,1fr))_auto] items-center gap-3 border-b border-[#252f45] px-4 py-4 last:border-0 sm:px-5">
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-white">{crew.ownerEmail || crew.userID}</p>
-              <p className="truncate text-xs text-penny-text-muted">{crew.userID} · {crew.ownerReferralCode || "No referral code"}</p>
-            </div>
-            <span className="text-sm text-white">{crew.totalMembers}</span>
-            <span className="text-sm text-emerald-300">{formatUSD(crew.totalCrewDeposits)}</span>
-            <span className="text-sm text-white">{formatUSD(crew.totalCrewWithdrawals)}</span>
-            <button type="button" onClick={() => { setSelectedUserID(crew.userID); setNotice(""); setErrorMessage(""); }} className="flex items-center gap-1 rounded-lg bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-300">
-              <Icon icon="mdi:eye-outline" width={16} /> View
-            </button>
-          </article>
-        ))}
+        ) : (
+          <div className="grid gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3 sm:p-5">
+            {crews.map((crew) => (
+              <article key={crew.userID} className="rounded-2xl border border-[#252f45] bg-[#0d1624] p-4 sm:p-5">
+                <div className="flex min-w-0 items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300">
+                    <Icon icon="mdi:account-group-outline" width={22} />
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="truncate text-sm font-semibold text-white">{crew.ownerEmail || "Crew owner"}</h2>
+                    <p className="mt-1 truncate text-xs text-penny-text-muted">{crew.userID}</p>
+                  </div>
+                </div>
+                <div className="mt-4 rounded-xl border border-[#252f45] bg-[#151d2d] px-3 py-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-penny-text-muted">Referral code</p>
+                  <p className="mt-1 text-sm font-medium text-white">{crew.ownerReferralCode || "—"}</p>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-3">
+                  <div><dt className="text-[10px] text-penny-text-muted">Members</dt><dd className="mt-1 text-sm font-semibold text-white">{crew.totalMembers.toLocaleString()}</dd></div>
+                  <div><dt className="text-[10px] text-penny-text-muted">Transactions</dt><dd className="mt-1 text-sm font-semibold text-white">{crew.totalCrewTransactions.toLocaleString()}</dd></div>
+                  <div><dt className="text-[10px] text-penny-text-muted">Deposits</dt><dd className="mt-1 text-sm font-semibold text-emerald-300">{formatUSD(crew.totalCrewDeposits)}</dd></div>
+                  <div><dt className="text-[10px] text-penny-text-muted">Withdrawals</dt><dd className="mt-1 text-sm font-semibold text-white">{formatUSD(crew.totalCrewWithdrawals)}</dd></div>
+                </dl>
+                <button type="button" onClick={() => { setSelectedUserID(crew.userID); setNotice(""); setErrorMessage(""); }} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-400/10 px-3 py-2.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-400/15">
+                  <Icon icon="mdi:eye-outline" width={16} /> View crew members
+                </button>
+              </article>
+            ))}
+          </div>
+        )}
         {!activeSearch && totalPages > 1 && (
           <footer className="flex items-center justify-between border-t border-[#252f45] px-4 py-3 text-sm text-penny-text-muted">
             <span>Page {currentPage} of {totalPages}</span>

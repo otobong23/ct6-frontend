@@ -143,19 +143,9 @@ export const adminNavLinks = [
     href: "/admin/crews",
   },
   {
-    page: "All Stocks",
-    icon: "mdi:chart-line-variant",
-    href: "/admin/stocks",
-  },
-  {
-    page: "Orders",
-    icon: "mdi:clipboard-list-outline",
-    href: "/admin/orders",
-  },
-  {
-    page: "My Stocks",
-    icon: "mdi:star-outline",
-    href: "/admin/my-stocks",
+    page: "Transactions",
+    icon: "mdi:swap-horizontal",
+    href: "/admin/transactions",
   },
   {
     page: "Notifications",

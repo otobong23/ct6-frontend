@@ -17,11 +17,11 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div>
             <label className="block text-xs sm:text-sm font-medium mb-2" style={{ color: "#9aa3b0" }}>Platform Name</label>
-            <input type="text" defaultValue="Pennystocks" className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm" style={{ background: "#0d1624", border: "1px solid #252f45", color: "white" }} />
+            <input type="text" defaultValue="CT6" className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm" style={{ background: "#0d1624", border: "1px solid #252f45", color: "white" }} />
           </div>
           <div>
             <label className="block text-xs sm:text-sm font-medium mb-2" style={{ color: "#9aa3b0" }}>Support Email</label>
-            <input type="email" defaultValue="support@pennystocks.com" className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm" style={{ background: "#0d1624", border: "1px solid #252f45", color: "white" }} />
+            <input type="email" defaultValue="ct6@gmail.com" className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm" style={{ background: "#0d1624", border: "1px solid #252f45", color: "white" }} />
           </div>
           <div>
             <label className="block text-xs sm:text-sm font-medium mb-2" style={{ color: "#9aa3b0" }}>Transaction Fee (%)</label>

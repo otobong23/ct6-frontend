@@ -241,9 +241,10 @@ export default function UserDetailPage() {
       // The admin endpoint /admin/transactions doesn't accept userId as a query parameter,
       // so we fetch the recent list and filter it client-side for this user.
       const res = await adminApi.transactions.list({page: 1, limit: 100});
-      const filtered = (res.data ?? []).filter(t => 
-        t.userId === userId || 
-        (typeof t.userId === 'object' && (t.userId as { _id: string })._id === userId)
+      const filtered = (res.data ?? []).filter((transaction) =>
+        typeof transaction.userId === "string"
+          ? transaction.userId === userId
+          : transaction.userId?._id === userId
       );
       return { ...res, data: filtered };
     },

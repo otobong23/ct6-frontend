@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { adminNavLinks } from "@/constants/admin-data";
-import Logo from "@/components/logo/Logo";
+import { Logo } from "@/components/Logo";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -141,7 +141,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
                 <div className="overflow-hidden">
                   <p className="text-sm font-semibold text-white truncate">{displayName}</p>
-                  <p className="text-xs" style={{ color: "#9aa3b0" }}>admin@pennystocks.com</p>
+                  <p className="text-xs" style={{ color: "#9aa3b0" }}>ct6@gmail.com</p>
                 </div>
               </div>
               <button
@@ -215,7 +215,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
                 <div className="overflow-hidden">
                   <p className="text-sm font-semibold text-white truncate">{displayName}</p>
-                  <p className="text-xs truncate" style={{ color: "#9aa3b0" }}>admin@pennystocks.com</p>
+                  <p className="text-xs truncate" style={{ color: "#9aa3b0" }}>ct6@gmail.com</p>
                 </div>
               </div>
               <button

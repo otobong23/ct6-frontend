@@ -4,7 +4,7 @@ import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { useQueryClient } from "@tanstack/react-query";
-import Logo from "@/components/logo/Logo";
+import { Logo } from "@/components/Logo";
 import Link from "next/link";
 import { adminApi } from "@/lib/endpoints";
 import { ApiError } from "@/lib/client";
@@ -127,7 +127,7 @@ function AdminLoginForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@pennystocks.com"
+                placeholder="ct6@gmail.com"
                 required
                 disabled={submitting}
                 className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl text-white placeholder-gray-500 transition-all outline-none"

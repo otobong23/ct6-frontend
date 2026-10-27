@@ -12,7 +12,7 @@ import {
 } from "@/hooks/queries/useAdminActions";
 import { adminApi } from "@/lib/endpoints";
 import { formatUSD } from "@/lib/admin-format";
-import { CopyTradePurchaseResponse, CopyTradingResponse, CreateCopyTradingDto, RiskLevel } from "@/lib/types";
+import type { AdminCopyTradePurchaseQuery, CopyTradePurchaseResponse, CopyTradingResponse, CreateCopyTradingDto, RiskLevel } from "@/lib/types";
 
 const RISK_STYLES: Record<RiskLevel, { bg: string; color: string }> = {
   low: { bg: "rgba(0,212,161,0.1)", color: "#00d4a1" },
@@ -57,6 +57,7 @@ const emptyForm = (): TraderFormState => ({
 function toBackendPayload(
   form: TraderFormState,
   duration: string,
+  existing?: CopyTradingResponse,
 ): CreateCopyTradingDto {
   const winRate = form.trades.length
     ? (form.trades.filter((t) => t > 0).length / form.trades.length) * 100
@@ -69,8 +70,8 @@ function toBackendPayload(
     country: form.countryCode.trim().toUpperCase(),
     last_10_trades: form.trades,
     duration: duration.trim() || "30 days",
-    purchases: 0,
-    totalAssets: 0,
+    purchases: existing?.purchases ?? 0,
+    totalAssets: existing?.totalAssets ?? 0,
     minInvestment: form.minInvestment,
     maxInvestment: form.maxInvestment,
     dailyAveragePercentage: form.dailyAveragePercentage
@@ -90,22 +91,30 @@ export default function CopyTradingAdminPage() {
   const [activeTab, setActiveTab] = useState<"setups" | "purchases">("setups");
   const [purchaseSearch, setPurchaseSearch] = useState("");
   const [purchaseStatusFilter, setPurchaseStatusFilter] = useState<"all" | "active" | "liquidated">("all");
+  const [purchasePage, setPurchasePage] = useState(1);
+  const purchaseQuery: AdminCopyTradePurchaseQuery = {
+    page: purchasePage,
+    limit: 25,
+    ...(purchaseStatusFilter === "all" ? {} : { status: purchaseStatusFilter }),
+  };
 
   const { data: purchasesData, isLoading: purchasesLoading, error: purchasesError } = useQuery({
-    queryKey: ["admin", "copy-trade-purchases"],
-    queryFn: () => adminApi.copyTrading.listPurchases({ limit: 100 }),
+    queryKey: ["admin", "copy-trade-purchases", purchasePage, purchaseStatusFilter],
+    queryFn: () => adminApi.copyTrading.listPurchases(purchaseQuery),
   });
-  const purchases: CopyTradePurchaseResponse[] = purchasesData?.data ?? [];
+  const purchases = useMemo<CopyTradePurchaseResponse[]>(() => purchasesData?.data ?? [], [purchasesData?.data]);
 
   // Edit PnL state
   const [editingPnlPurchase, setEditingPnlPurchase] = useState<CopyTradePurchaseResponse | null>(null);
   const [pnlValue, setPnlValue] = useState("");
+  const [investedAmountValue, setInvestedAmountValue] = useState("");
   const [pnlError, setPnlError] = useState("");
   const [isSavingPnl, setIsSavingPnl] = useState(false);
 
   const openPnlEdit = (purchase: CopyTradePurchaseResponse) => {
     setEditingPnlPurchase(purchase);
     setPnlValue(purchase.pnl !== undefined && purchase.pnl !== null ? String(purchase.pnl) : "0");
+    setInvestedAmountValue(String(purchase.amountInvested ?? 0));
     setPnlError("");
   };
 
@@ -113,6 +122,7 @@ export default function CopyTradingAdminPage() {
     if (!isSavingPnl) {
       setEditingPnlPurchase(null);
       setPnlValue("");
+      setInvestedAmountValue("");
       setPnlError("");
     }
   };
@@ -121,14 +131,15 @@ export default function CopyTradingAdminPage() {
     e.preventDefault();
     if (!editingPnlPurchase) return;
     const num = parseFloat(pnlValue);
-    if (isNaN(num)) {
-      setPnlError("Please enter a valid number for PnL");
+    const investedAmount = Number(investedAmountValue);
+    if (!Number.isFinite(num) || !investedAmountValue.trim() || !Number.isFinite(investedAmount) || investedAmount < 0) {
+      setPnlError("Enter a valid PnL and a non-negative invested amount.");
       return;
     }
     setIsSavingPnl(true);
     setPnlError("");
     try {
-      await adminApi.copyTrading.updatePurchase(editingPnlPurchase._id, { pnl: num });
+      await adminApi.copyTrading.updatePurchase(editingPnlPurchase._id, { pnl: num, amountInvested: investedAmount });
       qc.invalidateQueries({ queryKey: ["admin", "copy-trade-purchases"] });
       qc.invalidateQueries({ queryKey: ["admin", "user-copy-trade-purchases"] });
       qc.invalidateQueries({ queryKey: ["admin", "users"] });
@@ -164,9 +175,9 @@ export default function CopyTradingAdminPage() {
       traderName: setup.traderName,
       countryCode: setup.country ?? "US",
       leverage: setup.leverage ?? 10,
-      dailyAveragePercentage: setup.dailyAveragePercentage,
-      minInvestment: setup.minInvestment,
-      maxInvestment: setup.maxInvestment,
+      dailyAveragePercentage: setup.dailyAveragePercentage ?? 0,
+      minInvestment: setup.minInvestment ?? 0,
+      maxInvestment: setup.maxInvestment ?? 0,
       trades:
         setup.last_10_trades && setup.last_10_trades.length
           ? setup.last_10_trades.slice(0, TRADE_COUNT)
@@ -179,8 +190,10 @@ export default function CopyTradingAdminPage() {
   const validateForm = () => {
     const errs: Record<string, string> = {};
     if (!formData.traderName.trim()) errs.traderName = "Trader name is required";
-    if (formData.minInvestment < 0 || formData.minInvestment > 100) errs.percentage = "Percentage must be between 0 and 100";
-    if (formData.maxInvestment < 0 || formData.maxInvestment > 100) errs.percentage = "Percentage must be between 0 and 100";
+    if (formData.minInvestment < 0 || formData.minInvestment > 100) errs.minInvestment = "Minimum investment must be between 0 and 100";
+    if (formData.maxInvestment <= 0 || formData.maxInvestment > 100) errs.maxInvestment = "Maximum investment must be between 0 and 100";
+    if (formData.minInvestment > formData.maxInvestment) errs.minInvestment = "Minimum investment cannot exceed maximum investment";
+    if (formData.dailyAveragePercentage < 0) errs.dailyAveragePercentage = "Daily average percentage cannot be negative";
     setFormErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -189,12 +202,12 @@ export default function CopyTradingAdminPage() {
     e.preventDefault();
     if (!validateForm()) return;
     setActionError("");
-    const payload = toBackendPayload(formData, durationValue);
     try {
       if (editingId) {
-        await updateMut.mutateAsync({ id: editingId, data: payload });
+        const existing = setups.find((setup) => setup._id === editingId);
+        await updateMut.mutateAsync({ id: editingId, data: toBackendPayload(formData, durationValue, existing) });
       } else {
-        await createMut.mutateAsync(payload);
+        await createMut.mutateAsync(toBackendPayload(formData, durationValue));
       }
       setShowModal(false);
     } catch (err) {
@@ -213,29 +226,18 @@ export default function CopyTradingAdminPage() {
     }
   };
 
-  // const toggleActive = async (setup: CopyTrading) => {
-  //   setActionError("");
-  //   try {
-  //     // Dedicated backend endpoint: PATCH /copy-trading/:id/toggle-active
-  //     await toggleMut.mutateAsync({ id: setup._id, isActive: !(setup.isActive !== false) });
-  //   } catch (err) {
-  //     setActionError(err instanceof Error ? err.message : "Failed to update setup.");
-  //   }
-  // };
-
   const filteredPurchases = useMemo(() => {
     return purchases.filter((p) => {
-      if (purchaseStatusFilter !== "all" && p.status !== purchaseStatusFilter) return false;
       if (!purchaseSearch.trim()) return true;
       const q = purchaseSearch.toLowerCase();
-      const userId: unknown = p.userId;
+      const userId = p.userId;
       const userName =
         typeof userId === "object" && userId !== null
-          ? `${(userId as { firstName?: string }).firstName ?? ""} ${(userId as { lastName?: string }).lastName ?? ""} ${(userId as { email?: string }).email ?? ""} ${(userId as { userID?: string }).userID ?? ""}`.toLowerCase()
+          ? `${userId.firstName ?? ""} ${userId.lastName ?? ""} ${userId.email ?? ""} ${userId.userID ?? ""}`.toLowerCase()
           : String(userId).toLowerCase();
       return p.traderName.toLowerCase().includes(q) || userName.includes(q);
     });
-  }, [purchases, purchaseSearch, purchaseStatusFilter]);
+  }, [purchases, purchaseSearch]);
 
   return (
     <div className="px-0 py-4 sm:px-1 sm:py-5 space-y-5">
@@ -246,7 +248,7 @@ export default function CopyTradingAdminPage() {
           <p className="text-xs sm:text-sm mt-1" style={{ color: "#9aa3b0" }}>
             {activeTab === "setups"
               ? isLoading ? "Loading..." : `${setups.length} setups configured`
-              : purchasesLoading ? "Loading..." : `${purchases.length} user trades recorded`}
+              : purchasesLoading ? "Loading..." : `${purchasesData?.pagination.total ?? purchases.length} user trades recorded`}
           </p>
         </div>
         {activeTab === "setups" && (
@@ -299,7 +301,7 @@ export default function CopyTradingAdminPage() {
               activeTab === "purchases" ? "bg-[#00d4a1]/25 text-[#00d4a1]" : "bg-white/10 text-[#9aa3b0]"
             }`}
           >
-            {purchases.length}
+            {purchasesData?.pagination.total ?? purchases.length}
           </span>
         </button>
       </div>
@@ -315,11 +317,11 @@ export default function CopyTradingAdminPage() {
         <div className="rounded-xl sm:rounded-2xl p-3 sm:p-5" style={{ background: "linear-gradient(135deg, #151d2d 0%, #1b2a40 100%)", border: "1px solid #252f45" }}>
           <p className="text-[10px] sm:text-sm" style={{ color: "#9aa3b0" }}>Total User Trades</p>
           <p className="text-lg sm:text-2xl lg:text-3xl font-extrabold text-white mt-1">
-            {purchasesLoading ? "—" : purchases.length}
+            {purchasesLoading ? "—" : (purchasesData?.pagination.total ?? purchases.length).toLocaleString()}
           </p>
         </div>
         <div className="rounded-xl sm:rounded-2xl p-3 sm:p-5" style={{ background: "linear-gradient(135deg, #151d2d 0%, #1b2a40 100%)", border: "1px solid #252f45" }}>
-          <p className="text-[10px] sm:text-sm" style={{ color: "#9aa3b0" }}>Total Invested</p>
+          <p className="text-[10px] sm:text-sm" style={{ color: "#9aa3b0" }}>Page investment total</p>
           <p className="text-lg sm:text-2xl lg:text-3xl font-extrabold text-[#00d4a1] mt-1">
             {purchasesLoading ? "—" : formatUSD(purchases.reduce((sum, p) => sum + (p.amountInvested || 0), 0))}
           </p>
@@ -387,14 +389,13 @@ export default function CopyTradingAdminPage() {
           <div className="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
             {setups.map((setup) => {
               const risk = RISK_STYLES[setup.riskLevel] ?? RISK_STYLES.low;
-              const isActive = true;
               return (
                 <div
                   key={setup._id}
                   className="rounded-2xl overflow-hidden transition-colors"
                   style={{
                     background: "linear-gradient(180deg, #151d2d 0%, #0d1624 100%)",
-                    border: `1px solid ${isActive ? "#252f45" : "#3a2020"}`,
+                    border: "1px solid #252f45",
                   }}
                 >
                   {/* Header */}
@@ -416,16 +417,7 @@ export default function CopyTradingAdminPage() {
                         </div>
                       </div>
                     </div>
-                    <span
-                      className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full shrink-0"
-                      style={{
-                        background: isActive ? "rgba(0,212,161,0.12)" : "rgba(244,67,54,0.12)",
-                        color: isActive ? "#00d4a1" : "#F44336",
-                      }}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: isActive ? "#00d4a1" : "#F44336" }} />
-                      {isActive ? "Active" : "Inactive"}
-                    </span>
+                    <span className="rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-bold text-emerald-300">Listed</span>
                   </div>
 
                   {/* Metrics grid */}
@@ -439,9 +431,8 @@ export default function CopyTradingAdminPage() {
                       <p className="text-sm font-bold text-white mt-0.5">{setup.leverage ?? 1}x</p>
                     </div>
                     <div className="p-3" style={{ background: "#0d1624" }}>
-                      <p className="text-[10px]" style={{ color: "#6b7785" }}>Fee</p>
-                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>{setup.minInvestment}%</p>
-                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>{setup.maxInvestment}%</p>
+                      <p className="text-[10px]" style={{ color: "#6b7785" }}>Investment range</p>
+                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>{setup.minInvestment}% – {setup.maxInvestment}%</p>
                     </div>
                     <div className="p-3" style={{ background: "#0d1624" }}>
                       <p className="text-[10px]" style={{ color: "#6b7785" }}>Copies</p>
@@ -451,15 +442,6 @@ export default function CopyTradingAdminPage() {
 
                   {/* Actions */}
                   <div className="p-4 sm:p-5 flex items-stretch gap-2">
-                    <button
-                      // onClick={() => toggleActive(setup)}
-                      // disabled={toggleMut.isPending}
-                      className="flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-                      style={{ background: "#0d1624", color: isActive ? "#9aa3b0" : "#00d4a1", border: "1px solid #252f45" }}
-                    >
-                      <Icon icon={isActive ? "mdi:pause" : "mdi:play"} width={14} />
-                      {isActive ? "Pause" : "Activate"}
-                    </button>
                     <button
                       onClick={() => openEdit(setup)}
                       className="flex-1 h-9 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer"
@@ -491,7 +473,7 @@ export default function CopyTradingAdminPage() {
             <div>
               <h2 className="text-base sm:text-lg font-bold text-white">Active User Copy Trades</h2>
               <p className="text-xs" style={{ color: "#6b7785" }}>
-                View all user copy trade purchases and edit their live profit (PnL)
+                Browse paginated purchases, filter by supported status, and update live profit.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -500,14 +482,14 @@ export default function CopyTradingAdminPage() {
                   type="text"
                   value={purchaseSearch}
                   onChange={(e) => setPurchaseSearch(e.target.value)}
-                  placeholder="Search trader or user..."
+                  placeholder="Search this page by trader or user..."
                   className="pl-8 pr-3 py-1.5 rounded-xl text-xs bg-[#0d1624] border border-[#252f45] text-white focus:outline-none focus:border-[#00d4a1]"
                 />
                 <Icon icon="mdi:magnify" width={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6b7785]" />
               </div>
               <select
                 value={purchaseStatusFilter}
-                onChange={(e) => setPurchaseStatusFilter(e.target.value as "all" | "active" | "liquidated")}
+                onChange={(e) => { setPurchaseStatusFilter(e.target.value as "all" | "active" | "liquidated"); setPurchasePage(1); }}
                 className="px-2.5 py-1.5 rounded-xl text-xs bg-[#0d1624] border border-[#252f45] text-white focus:outline-none"
               >
                 <option value="all">All Status</option>
@@ -541,13 +523,10 @@ export default function CopyTradingAdminPage() {
           ) : (
             <div className="p-4 sm:p-5 space-y-3">
               {filteredPurchases.map((trade) => {
-                const isActive = trade.status !== "liquidated";
+                const isActive = trade.status === "active";
                 const pnl = trade.pnl ?? 0;
                 const isProfitable = pnl >= 0;
-                const userId = trade.userId as unknown as
-                  | string
-                  | { firstName?: string; lastName?: string; email?: string; userID?: string }
-                  | null;
+                const userId = trade.userId;
                 const userName =
                   typeof userId === "object" && userId !== null
                     ? `${userId.firstName ?? ""} ${userId.lastName ?? ""}`.trim() || userId.email || userId.userID || "User"
@@ -581,7 +560,7 @@ export default function CopyTradingAdminPage() {
                           </span>
                         </div>
                         <p className="text-xs mt-0.5" style={{ color: "#6b7785" }}>
-                          User: <span className="text-white font-medium">{userName}</span> · {trade.duration} · ${trade.minInvestment} - ${trade.maxInvestment}
+                          User: <span className="text-white font-medium">{userName}</span> · {trade.duration} · {trade.minInvestment}% – {trade.maxInvestment}%
                         </p>
                       </div>
                     </div>
@@ -619,13 +598,22 @@ export default function CopyTradingAdminPage() {
                         style={{ background: "#00d4a1", color: "#0d1624" }}
                       >
                         <Icon icon="mdi:pencil" width={14} />
-                        <span>Edit Live Profit</span>
+                        <span>Edit trade</span>
                       </button>
                     </div>
                   </div>
                 );
               })}
             </div>
+          )}
+          {!purchasesLoading && !purchasesError && purchasesData?.pagination && purchasesData.pagination.totalPages > 1 && (
+            <footer className="flex items-center justify-between border-t border-[#252f45] px-4 py-3 text-xs text-[#9aa3b0]">
+              <span>Page {purchasesData.pagination.page} of {purchasesData.pagination.totalPages}</span>
+              <div className="flex gap-2">
+                <button type="button" disabled={purchasePage <= 1} onClick={() => setPurchasePage((current) => Math.max(1, current - 1))} className="rounded-lg border border-[#303b50] px-3 py-2 text-white disabled:opacity-40">Previous</button>
+                <button type="button" disabled={purchasePage >= purchasesData.pagination.totalPages} onClick={() => setPurchasePage((current) => Math.min(purchasesData.pagination.totalPages, current + 1))} className="rounded-lg border border-[#303b50] px-3 py-2 text-white disabled:opacity-40">Next</button>
+              </div>
+            </footer>
           )}
         </div>
       )}
@@ -734,34 +722,48 @@ export default function CopyTradingAdminPage() {
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="trade-price" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Minimum Investment (%)</label>
+                    <label htmlFor="daily-average-percentage" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Daily average (%)</label>
                     <input
+                      id="daily-average-percentage"
                       type="number"
                       min="0"
-                      max="100"
                       step="0.01"
-                      name="trade-min"
-                      value={formData.minInvestment}
-                      onChange={(e) => setFormData(f => ({ ...f, percentage: parseFloat(e.target.value) || 0 }))}
-                      className="w-full px-4 py-2.5 rounded-xl text-sm"
-                      style={{ background: "#151d2d", border: `1px solid ${formErrors.percentage ? "#F44336" : "#252f45"}`, color: "white" }}
+                      value={formData.dailyAveragePercentage}
+                      onChange={(e) => setFormData((form) => ({ ...form, dailyAveragePercentage: Number(e.target.value) || 0 }))}
+                      className="w-full rounded-xl px-4 py-2.5 text-sm"
+                      style={{ background: "#151d2d", border: `1px solid ${formErrors.dailyAveragePercentage ? "#F44336" : "#252f45"}`, color: "white" }}
                     />
-                    {formErrors.percentage && <p className="text-xs mt-1" style={{ color: "#F44336" }}>{formErrors.percentage}</p>}
+                    {formErrors.dailyAveragePercentage && <p className="mt-1 text-xs text-red-400">{formErrors.dailyAveragePercentage}</p>}
                   </div>
                   <div>
-                    <label htmlFor="trade-price" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Maximum Investment (%)</label>
+                    <label htmlFor="trade-min" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Minimum Investment (%)</label>
                     <input
+                      id="trade-min"
                       type="number"
                       min="0"
                       max="100"
                       step="0.01"
-                      name="trade-max"
-                      value={formData.maxInvestment}
-                      onChange={(e) => setFormData(f => ({ ...f, percentage: parseFloat(e.target.value) || 0 }))}
+                      value={formData.minInvestment}
+                      onChange={(e) => setFormData((form) => ({ ...form, minInvestment: Number(e.target.value) || 0 }))}
                       className="w-full px-4 py-2.5 rounded-xl text-sm"
-                      style={{ background: "#151d2d", border: `1px solid ${formErrors.percentage ? "#F44336" : "#252f45"}`, color: "white" }}
+                      style={{ background: "#151d2d", border: `1px solid ${formErrors.minInvestment ? "#F44336" : "#252f45"}`, color: "white" }}
                     />
-                    {formErrors.percentage && <p className="text-xs mt-1" style={{ color: "#F44336" }}>{formErrors.percentage}</p>}
+                    {formErrors.minInvestment && <p className="text-xs mt-1" style={{ color: "#F44336" }}>{formErrors.minInvestment}</p>}
+                  </div>
+                  <div>
+                    <label htmlFor="trade-max" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Maximum Investment (%)</label>
+                    <input
+                      id="trade-max"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      value={formData.maxInvestment}
+                      onChange={(e) => setFormData((form) => ({ ...form, maxInvestment: Number(e.target.value) || 0 }))}
+                      className="w-full px-4 py-2.5 rounded-xl text-sm"
+                      style={{ background: "#151d2d", border: `1px solid ${formErrors.maxInvestment ? "#F44336" : "#252f45"}`, color: "white" }}
+                    />
+                    {formErrors.maxInvestment && <p className="text-xs mt-1" style={{ color: "#F44336" }}>{formErrors.maxInvestment}</p>}
                   </div>
                 </div>
               </div>
@@ -873,9 +875,9 @@ export default function CopyTradingAdminPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-white">Edit Live Profit (PnL)</h2>
+                <h2 className="text-base sm:text-lg font-bold text-white">Edit User Trade</h2>
                 <p className="text-xs" style={{ color: "#6b7785" }}>
-                  {editingPnlPurchase.traderName} · Invested: {formatUSD(editingPnlPurchase.amountInvested)}
+                  {editingPnlPurchase.traderName} · Current investment: {formatUSD(editingPnlPurchase.amountInvested)}
                 </p>
               </div>
               <button
@@ -890,6 +892,20 @@ export default function CopyTradingAdminPage() {
             </div>
 
             <form onSubmit={handleSavePnl} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="trade-invested-amount" className="text-[10px] font-semibold sm:text-xs" style={{ color: "#6b7785" }}>Amount invested ($)</label>
+                <input
+                  id="trade-invested-amount"
+                  type="number"
+                  min="0"
+                  step="any"
+                  required
+                  value={investedAmountValue}
+                  onChange={(event) => { setInvestedAmountValue(event.target.value); setPnlError(""); }}
+                  className="w-full rounded-xl px-4 py-2.5 text-sm text-white"
+                  style={{ background: "#0d1624", border: `1px solid ${pnlError ? "#F44336" : "#252f45"}` }}
+                />
+              </div>
               <div className="p-3 rounded-xl flex items-center justify-between" style={{ background: "#0d1624", border: "1px solid #252f45" }}>
                 <span className="text-xs" style={{ color: "#6b7785" }}>Current PnL:</span>
                 <span className="text-sm font-bold" style={{ color: (editingPnlPurchase.pnl ?? 0) >= 0 ? "#00d4a1" : "#F44336" }}>
@@ -917,12 +933,12 @@ export default function CopyTradingAdminPage() {
                 />
               </div>
 
-              {pnlValue && !isNaN(parseFloat(pnlValue)) && editingPnlPurchase.amountInvested > 0 && (
+              {pnlValue && !isNaN(parseFloat(pnlValue)) && Number(investedAmountValue) > 0 && (
                 <div className="text-xs flex justify-between px-1" style={{ color: "#9aa3b0" }}>
                   <span>Return Rate:</span>
                   <span className="font-semibold" style={{ color: parseFloat(pnlValue) >= 0 ? "#00d4a1" : "#F44336" }}>
                     {parseFloat(pnlValue) >= 0 ? "+" : ""}
-                    {((parseFloat(pnlValue) / editingPnlPurchase.amountInvested) * 100).toFixed(2)}%
+                    {((parseFloat(pnlValue) / Number(investedAmountValue)) * 100).toFixed(2)}%
                   </span>
                 </div>
               )}

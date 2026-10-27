@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 const items = [
   { href: "/home", label: "Home", icon: "solar:home-bold" },
   { href: "/models", label: "Models", icon: "streamline-flex:graph-bar-increase-square-solid" },
+  // { href: "/copy-trading", label: "My trades", icon: "mdi:chart-timeline-variant" },
   { href: "/ai-trade", label: "AI trade", icon: "material-symbols:candlestick-chart-rounded", center: true },
   { href: "/team", label: "Team", icon: "fluent:people-team-28-filled" },
   { href: "/profile", label: "Profile", icon: "reicon:profile-circle-filled" },
