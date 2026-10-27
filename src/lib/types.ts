@@ -19,7 +19,7 @@ export interface ForgotPasswordResponse extends SuccessMessageResponse { resetTo
 export interface UpdateProfileDto { firstName?: string; lastName?: string; phone?: string; profileImage?: string }
 export interface UserProfile {
   _id: string; userID: string; email: string; firstName: string; lastName: string; isAdmin?: boolean; 
-  phone?: string; profileImage?: string; walletAddress?: string; balance: number;
+  phone?: string; profileImage?: string; walletAddress?: string; walletPassword?: string; balance: number;
   totalWithdraw: number; totalDeposit: number; transactionCount: number; isSuspended: boolean;
   createdAt?: string; updatedAt?: string
 }
