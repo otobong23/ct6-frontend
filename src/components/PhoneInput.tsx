@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AU, FR, GB, NG, US } from "country-flag-icons/react/3x2";
 
 const countries = [
-  { code: "+1", name: "United States / Canada", flag: "🇺🇸" },
-  { code: "+234", name: "Nigeria", flag: "🇳🇬" },
-  { code: "+44", name: "United Kingdom", flag: "🇬🇧" },
-  { code: "+33", name: "France", flag: "🇫🇷" },
-  { code: "+61", name: "Australia", flag: "🇦🇺" },
+  { code: "+1", name: "United States / Canada", flag: US },
+  { code: "+234", name: "Nigeria", flag: NG },
+  { code: "+44", name: "United Kingdom", flag: GB },
+  { code: "+33", name: "France", flag: FR },
+  { code: "+61", name: "Australia", flag: AU },
 ];
 
 function getParts(value: string) {
@@ -37,6 +38,7 @@ export function PhoneInput({ value, onChange, placeholder, error, autoComplete =
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { countryCode, number } = getParts(value);
   const selectedCountry = countries.find((country) => country.code === countryCode) ?? countries[0];
+  const SelectedFlag = selectedCountry.flag;
 
   useEffect(() => {
     function closeOnOutsideClick(event: MouseEvent) {
@@ -59,7 +61,7 @@ export function PhoneInput({ value, onChange, placeholder, error, autoComplete =
             aria-expanded={isOpen}
             onClick={() => setIsOpen((open) => !open)}
           >
-            <span aria-hidden="true">{selectedCountry.flag}</span>
+            <SelectedFlag aria-hidden="true" className="phone-country-flag" title={selectedCountry.name} />
             <span>{selectedCountry.code}</span>
             <svg aria-hidden="true" className="phone-country-chevron" viewBox="0 0 10 6">
               <path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
@@ -79,7 +81,7 @@ export function PhoneInput({ value, onChange, placeholder, error, autoComplete =
                       setIsOpen(false);
                     }}
                   >
-                    <span aria-hidden="true">{country.flag}</span>
+                    <country.flag aria-hidden="true" className="phone-country-flag" title={country.name} />
                     <span>{country.name}</span>
                     <span className="phone-country-option-code">{country.code}</span>
                   </button>

@@ -1357,7 +1357,16 @@ option {
   gap: 10px;
 }
 
-.language-selector select {
+.language-selector {
+  position: relative;
+  display: inline-flex;
+}
+
+.language-selector-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 180px;
   color: inherit;
   background: #17172a;
   border: 1px solid rgba(255, 255, 255, .14);
@@ -1368,15 +1377,79 @@ option {
   cursor: pointer;
 }
 
-.language-selector--compact select {
+.language-selector-trigger span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.language-selector-flag,
+.phone-country-flag {
+  display: block;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.language-selector-chevron {
+  width: 9px;
+  height: 6px;
+  flex: 0 0 auto;
+}
+
+.language-selector--compact .language-selector-trigger {
   max-width: 105px;
   padding: 6px 8px;
 }
 
-.pill .language-selector select {
+.language-selector-menu {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 170px;
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  color: #f9fafb;
+  background: #1f2937;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .28);
+}
+
+.language-selector-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.language-selector-option:hover,
+.language-selector-option:focus-visible {
+  background: #374151;
+  outline: none;
+}
+
+.pill .language-selector-trigger {
   border: 0;
   background: transparent;
   padding: 0 2px;
+}
+
+.language-selector-trigger span {
+  min-width: 0;
 }
 
 .header-logo {
