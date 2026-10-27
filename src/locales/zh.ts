@@ -26,4 +26,4 @@ const zhModels: Record<string, string> = {
   "Trust Model": "信托模型", "Conservative Model": "稳健模型", "Super Model": "超级模型", "20 team members required to activate plan": "需要20名团队成员才能激活此方案", "180 Days": "180天", "240 Days": "240天", "365 Days": "365天", "Deposit Successful": "充值成功", "Withdrawal Successful": "提现成功"
 };
 
-export default { zh, zhExtra, zhPage, zhGuides, zhOperations, zhModels };
+export default { ...zh, ...zhExtra, ...zhPage, ...zhGuides, ...zhOperations, ...zhModels };

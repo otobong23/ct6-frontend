@@ -26,4 +26,4 @@ const frModels: Record<string, string> = {
   "Trust Model": "Modèle de confiance", "Conservative Model": "Modèle prudent", "Super Model": "Modèle supérieur", "20 team members required to activate plan": "20 membres d'équipe sont nécessaires pour activer ce plan", "180 Days": "180 jours", "240 Days": "240 jours", "365 Days": "365 jours", "Deposit Successful": "Dépôt réussi", "Withdrawal Successful": "Retrait réussi"
 };
 
-export default { fr, frExtra, frPage, frGuides, frOperations, frModels };
+export default { ...fr, ...frExtra, ...frPage, ...frGuides, ...frOperations, ...frModels };
