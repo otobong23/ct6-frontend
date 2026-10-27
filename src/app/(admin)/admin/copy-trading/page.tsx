@@ -27,8 +27,9 @@ interface TraderFormState {
   traderName: string;
   countryCode: string;
   leverage: number;
-  dailyAverageProfit: number;
-  price: number;
+  dailyAveragePercentage: number;
+  minInvestment: number;
+  maxInvestment: number;
   trades: number[];
 }
 
@@ -46,8 +47,9 @@ const emptyForm = (): TraderFormState => ({
   traderName: "",
   countryCode: "US",
   leverage: 10,
-  dailyAverageProfit: 12,
-  price: 20,
+  dailyAveragePercentage: 12,
+  minInvestment: 10,
+  maxInvestment: 20,
   trades: Array.from({ length: TRADE_COUNT }, () => 10),
 });
 
@@ -69,8 +71,9 @@ function toBackendPayload(
     duration: duration.trim() || "30 days",
     purchases: 0,
     totalAssets: 0,
-    price: form.price,
-    dailyAverageProfit: form.dailyAverageProfit
+    minInvestment: form.minInvestment,
+    maxInvestment: form.maxInvestment,
+    dailyAveragePercentage: form.dailyAveragePercentage
   };
 }
 
@@ -161,8 +164,9 @@ export default function CopyTradingAdminPage() {
       traderName: setup.traderName,
       countryCode: setup.country ?? "US",
       leverage: setup.leverage ?? 10,
-      dailyAverageProfit: setup.dailyAverageProfit,
-      price: setup.price,
+      dailyAveragePercentage: setup.dailyAveragePercentage,
+      minInvestment: setup.minInvestment,
+      maxInvestment: setup.maxInvestment,
       trades:
         setup.last_10_trades && setup.last_10_trades.length
           ? setup.last_10_trades.slice(0, TRADE_COUNT)
@@ -175,7 +179,8 @@ export default function CopyTradingAdminPage() {
   const validateForm = () => {
     const errs: Record<string, string> = {};
     if (!formData.traderName.trim()) errs.traderName = "Trader name is required";
-    if (formData.price < 0 || formData.price > 100) errs.percentage = "Percentage must be between 0 and 100";
+    if (formData.minInvestment < 0 || formData.minInvestment > 100) errs.percentage = "Percentage must be between 0 and 100";
+    if (formData.maxInvestment < 0 || formData.maxInvestment > 100) errs.percentage = "Percentage must be between 0 and 100";
     setFormErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -435,7 +440,8 @@ export default function CopyTradingAdminPage() {
                     </div>
                     <div className="p-3" style={{ background: "#0d1624" }}>
                       <p className="text-[10px]" style={{ color: "#6b7785" }}>Fee</p>
-                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>{setup.price}%</p>
+                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>{setup.minInvestment}%</p>
+                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>{setup.maxInvestment}%</p>
                     </div>
                     <div className="p-3" style={{ background: "#0d1624" }}>
                       <p className="text-[10px]" style={{ color: "#6b7785" }}>Copies</p>
@@ -575,7 +581,7 @@ export default function CopyTradingAdminPage() {
                           </span>
                         </div>
                         <p className="text-xs mt-0.5" style={{ color: "#6b7785" }}>
-                          User: <span className="text-white font-medium">{userName}</span> · {trade.duration} · ${trade.price} fee
+                          User: <span className="text-white font-medium">{userName}</span> · {trade.duration} · ${trade.minInvestment} - ${trade.maxInvestment}
                         </p>
                       </div>
                     </div>
@@ -728,14 +734,29 @@ export default function CopyTradingAdminPage() {
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="trade-price" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Price (%)</label>
+                    <label htmlFor="trade-price" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Minimum Investment (%)</label>
                     <input
                       type="number"
                       min="0"
                       max="100"
                       step="0.01"
-                      name="trade-price"
-                      value={formData.price}
+                      name="trade-min"
+                      value={formData.minInvestment}
+                      onChange={(e) => setFormData(f => ({ ...f, percentage: parseFloat(e.target.value) || 0 }))}
+                      className="w-full px-4 py-2.5 rounded-xl text-sm"
+                      style={{ background: "#151d2d", border: `1px solid ${formErrors.percentage ? "#F44336" : "#252f45"}`, color: "white" }}
+                    />
+                    {formErrors.percentage && <p className="text-xs mt-1" style={{ color: "#F44336" }}>{formErrors.percentage}</p>}
+                  </div>
+                  <div>
+                    <label htmlFor="trade-price" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Maximum Investment (%)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      name="trade-max"
+                      value={formData.maxInvestment}
                       onChange={(e) => setFormData(f => ({ ...f, percentage: parseFloat(e.target.value) || 0 }))}
                       className="w-full px-4 py-2.5 rounded-xl text-sm"
                       style={{ background: "#151d2d", border: `1px solid ${formErrors.percentage ? "#F44336" : "#252f45"}`, color: "white" }}
