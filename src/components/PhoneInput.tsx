@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AU, FR, GB, NG, US } from "country-flag-icons/react/3x2";
+import {
+  AE, AU, BR, CN, DE, ES, FR, GB, GH, IN, JP, NG, PT, RU, SA, US, ZA,
+} from "country-flag-icons/react/3x2";
 
 const countries = [
   { code: "+1", name: "United States / Canada", flag: US },
@@ -10,6 +12,18 @@ const countries = [
   { code: "+44", name: "United Kingdom", flag: GB },
   { code: "+33", name: "France", flag: FR },
   { code: "+61", name: "Australia", flag: AU },
+  { code: "+233", name: "Ghana", flag: GH },
+  { code: "+27", name: "South Africa", flag: ZA },
+  { code: "+49", name: "Germany", flag: DE },
+  { code: "+34", name: "Spain", flag: ES },
+  { code: "+351", name: "Portugal", flag: PT },
+  { code: "+55", name: "Brazil", flag: BR },
+  { code: "+971", name: "United Arab Emirates", flag: AE },
+  { code: "+966", name: "Saudi Arabia", flag: SA },
+  { code: "+91", name: "India", flag: IN },
+  { code: "+86", name: "China", flag: CN },
+  { code: "+81", name: "Japan", flag: JP },
+  { code: "+7", name: "Russia", flag: RU },
 ];
 
 function getParts(value: string) {
