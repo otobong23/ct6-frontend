@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthShell, BackPill } from "@/components/AuthShell";
 import { TextField } from "@/components/TextField";
+import { PhoneInput } from "@/components/PhoneInput";
 import { PasswordField } from "@/components/PasswordField";
 import { Button } from "@/components/Button";
 import { useAuth } from "@/context/AuthContext";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_RE = /^\d{7,15}$/;
+const PHONE_RE = /^\+?\d{7,15}$/;
 const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
 
 type Errors = Partial<{
@@ -30,7 +31,6 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [referral, setReferral] = useState("");
@@ -47,7 +47,7 @@ export default function RegisterPage() {
     const next: Errors = {};
     if (!name.trim()) next.name = "Name cannot be empty";
     if (!EMAIL_RE.test(email)) next.email = "This email is not valid";
-    if (!PHONE_RE.test(phone)) next.phone = "The phone number you entered is invalid";
+    if (!PHONE_RE.test(phone.replace(/[\s()-]/g, ""))) next.phone = "The phone number you entered is invalid";
     if (!PASSWORD_RE.test(password))
       next.password =
         "Password must be six characters or above, must also contain upper case, lowercase and special characters";
@@ -70,7 +70,7 @@ export default function RegisterPage() {
           password,
           firstName,
           lastName: lastNameParts.join(" "),
-          phone: `${countryCode}${phone.replace(/\D/g, "")}`,
+          phone: phone.replace(/[\s()-]/g, ""),
           referral_code: referral.trim(),
         });
         router.replace(`/verify-email?email=${encodeURIComponent(email.trim())}`);
@@ -111,22 +111,11 @@ export default function RegisterPage() {
           onChange={(e) => setEmail(e.target.value)}
           error={errors.email}
         />
-        <TextField
-          placeholder="095 5763 11"
+        <PhoneInput
+          placeholder="Phone number"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={setPhone}
           error={errors.phone}
-          leftSlot={
-            <select
-              value={countryCode}
-              onChange={(e) => setCountryCode(e.target.value)}
-              className="field-select"
-            >
-              <option value="+1">{t("+1")}</option>
-              <option value="+234">{t("+234")}</option>
-              <option value="+44">{t("+44")}</option>
-            </select>
-          }
         />
         <PasswordField
           placeholder={t("Create Password")}

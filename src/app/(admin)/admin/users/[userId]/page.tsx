@@ -9,6 +9,7 @@ import { useUpdateUser, useToggleUserSuspend, useToggleUserAdmin } from "@/hooks
 import { adminApi } from "@/lib/endpoints";
 import type { UserProfile, CopyTradePurchaseResponse } from "@/lib/types";
 import { formatUSD } from "@/lib/admin-format";
+import { PhoneInput } from "@/components/PhoneInput";
 
 // (No mock data remains — all sections now use real API calls)
 
@@ -346,12 +347,10 @@ export default function UserDetailPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] sm:text-xs font-semibold" style={{ color: "#6b7785" }}>Phone</label>
-                <input
-                  type="tel"
+                <PhoneInput
                   value={editForm.phone}
-                  onChange={(e) => setEditForm(f => ({ ...f, phone: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl text-sm"
-                  style={{ background: "#0d1624", border: "1px solid #252f45", color: "white" }}
+                  onChange={(phone) => setEditForm((form) => ({ ...form, phone }))}
+                  placeholder="Phone number"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

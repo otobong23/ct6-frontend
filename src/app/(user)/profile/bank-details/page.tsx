@@ -6,6 +6,7 @@ import { BackPill } from "@/components/AuthShell";
 import { Button } from "@/components/Button";
 import { PageHeader } from "@/components/PageHeader";
 import { TextField } from "@/components/TextField";
+import { PhoneInput } from "@/components/PhoneInput";
 import { useAuth } from "@/context/AuthContext";
 import { userApi } from "@/lib/endpoints";
 
@@ -56,7 +57,7 @@ export default function ProfileSettingsPage() {
         </div>
         <div>
           <p className="field-label">{t("Phone number")}</p>
-          <TextField autoComplete="tel" type="tel" placeholder={t("Phone number")} value={phone} onChange={(event) => setPhone(event.target.value)} />
+          <PhoneInput placeholder={t("Phone number")} value={phone} onChange={setPhone} />
         </div>
         {error && <p className="field-error-text" role="alert">{error}</p>}
         {saved && <p role="status">{t("Profile updated successfully")}</p>}
