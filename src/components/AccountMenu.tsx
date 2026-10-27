@@ -30,7 +30,7 @@ export function AccountMenu() {
             {t("General Settings")}
           </button>
           <button type="button" className="account-menu-item">
-            {t("Bank Settings")}
+            {t("Profile Settings")}
           </button>
           <button type="button" className="account-menu-item">
             {t("Profile")}

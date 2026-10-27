@@ -2,12 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CN, FR, US } from "country-flag-icons/react/3x2";
+import { CN, DE, ES, FR, IN, JP, PT, RU, SA, US } from "country-flag-icons/react/3x2";
 
 const languages = [
   { code: "en", name: "English", flag: US },
   { code: "fr", name: "Français", flag: FR },
   { code: "zh", name: "中文", flag: CN },
+  { code: "es", name: "Español", flag: ES },
+  { code: "pt", name: "Português", flag: PT },
+  { code: "de", name: "Deutsch", flag: DE },
+  { code: "ar", name: "العربية", flag: SA },
+  { code: "ru", name: "Русский", flag: RU },
+  { code: "hi", name: "हिन्दी", flag: IN },
+  { code: "ja", name: "日本語", flag: JP },
 ];
 
 export function LanguageSelector({ compact = false }: { compact?: boolean }) {
