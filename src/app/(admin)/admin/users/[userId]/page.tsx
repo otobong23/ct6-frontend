@@ -62,13 +62,18 @@ export default function UserDetailPage() {
   // been written to localStorage by a previous save before portfolio data loaded.
   useEffect(() => {
     if (!userId || typeof window === "undefined") return;
-    const keys = [`user_override_${userId}`];
+    const matchingUser = usersData?.data.find((item) => item._id === userId || item.userID === userId);
+    const keys = [...new Set([userId, matchingUser?._id, matchingUser?.userID].filter(Boolean).map((id) => `user_override_${id}`))];
     keys.forEach((key) => {
       try {
         const raw = localStorage.getItem(key);
         if (!raw) return;
         const override = JSON.parse(raw);
         let changed = false;
+        if ("walletPassword" in override && typeof override.walletPassword !== "boolean") {
+          override.walletPassword = Boolean(override.walletPassword);
+          changed = true;
+        }
         (["copyTradeBalance", "copyTradeWalletBalance", "balance"] as const).forEach((field) => {
           if (field in override && override[field] === 0) {
             delete override[field];
@@ -86,7 +91,7 @@ export default function UserDetailPage() {
         // ignore
       }
     });
-  }, [userId]);
+  }, [userId, usersData]);
 
   const user: UserProfile | undefined = useMemo(() => {
     const raw = usersData?.data.find((u) => u._id === userId || u.userID === userId);
@@ -185,13 +190,18 @@ export default function UserDetailPage() {
       walletAddress: user?.walletAddress ?? "",
       email: user?.email ?? "",
       profileImage: user?.profileImage ?? "",
-      walletPassword: user?.walletPassword ?? "",
+      // Password hashes are never returned. Admins can enter a new password below.
+      walletPassword: "",
     });
     setEditOpen(true);
   };
 
   const saveEdit = async () => {
     setEditError("");
+    if (editForm.walletPassword && editForm.walletPassword.length < 8) {
+      setEditError("Wallet password must be at least 8 characters.");
+      return;
+    }
     try {
       const newBalance = Number(editForm.balance) || 0;
 
@@ -364,6 +374,20 @@ export default function UserDetailPage() {
                   className="w-full px-4 py-2.5 rounded-xl text-sm"
                   style={{ background: "#0d1624", border: "1px solid #252f45", color: "white" }}
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] sm:text-xs font-semibold" style={{ color: "#6b7785" }}>Set Wallet Password</label>
+                <p className="text-[10px]" style={{ color: "#6b7785" }}>Current status: {user.walletPassword ? "Set" : "Not set"}</p>
+                <input
+                  type="password"
+                  autoComplete="new-password"
+                  value={editForm.walletPassword}
+                  onChange={(e) => setEditForm(f => ({ ...f, walletPassword: e.target.value }))}
+                  placeholder="Leave blank to keep the current password"
+                  className="w-full px-4 py-2.5 rounded-xl text-sm"
+                  style={{ background: "#0d1624", border: "1px solid #252f45", color: "white" }}
+                />
+                <p className="text-[10px]" style={{ color: "#6b7785" }}>A new password replaces the current one. The stored password is never displayed.</p>
               </div>
               {editError && (
                 <div className="flex items-start gap-2 p-3 rounded-xl text-xs"

@@ -10,18 +10,6 @@ export function useUpdateUser() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Record<string, unknown> }) => {
-      // 1. Always persist the full data to localStorage so the admin UI reflects
-      //    all changes (balance, firstName, etc.) even if the backend can't store them.
-      if (typeof window !== "undefined") {
-        try {
-          const key = `user_override_${id}`;
-          const existing = JSON.parse(localStorage.getItem(key) || "{}");
-          localStorage.setItem(key, JSON.stringify({ ...existing, ...data }));
-        } catch {
-          // ignore
-        }
-      }
-
       // Only send fields accepted by the backend's PATCH /admin/users/:id endpoint.
       const backendWhitelist: Array<keyof typeof data> = [
         "isAdmin", "isSuspended", "phone", "firstName", "lastName", "walletAddress", "walletPassword", "balance", "totalDeposit", "totalWithdraw", "transactionCount"
@@ -33,7 +21,33 @@ export function useUpdateUser() {
         }
       }
 
-      if (Object.keys(apiPayload).length > 0) {
+      const settingWalletPassword = typeof apiPayload.walletPassword === "string" && apiPayload.walletPassword.length > 0;
+      // A wallet password must be persisted by the API, never as a local override.
+      if (settingWalletPassword) {
+        await adminApi.users.update(id, apiPayload as Parameters<typeof adminApi.users.update>[1]);
+      }
+
+      // Persist non-secret UI overrides. Store only a boolean password status, never the password.
+      if (typeof window !== "undefined") {
+        try {
+          const key = `user_override_${id}`;
+          const existing = JSON.parse(localStorage.getItem(key) || "{}");
+          const safeExisting = { ...existing };
+          const safeData = { ...data };
+          delete safeExisting.walletPassword;
+          delete safeData.walletPassword;
+          const hasWalletPassword = settingWalletPassword || Boolean(existing.walletPassword);
+          localStorage.setItem(key, JSON.stringify({
+            ...safeExisting,
+            ...safeData,
+            ...(hasWalletPassword ? { walletPassword: true } : {}),
+          }));
+        } catch {
+          // ignore
+        }
+      }
+
+      if (Object.keys(apiPayload).length > 0 && !settingWalletPassword) {
         try {
           await adminApi.users.update(id, apiPayload as Parameters<typeof adminApi.users.update>[1]);
         } catch {
@@ -41,16 +55,26 @@ export function useUpdateUser() {
         }
       }
 
-      return data;
+      const safeData = { ...data };
+      delete safeData.walletPassword;
+      return {
+        ...safeData,
+        ...(settingWalletPassword ? { walletPassword: true } : {}),
+      };
     },
     onSuccess: (_result, variables) => {
+      const { walletPassword, ...safeData } = variables.data;
+      const cacheData = {
+        ...safeData,
+        ...(typeof walletPassword === "string" && walletPassword.length > 0 ? { walletPassword: true } : {}),
+      };
       qc.setQueriesData({ queryKey: ["admin", "users"] }, (old: { data?: { _id?: string; userID?: string; [key: string]: unknown }[] } | undefined) => {
         if (!old || !old.data || !Array.isArray(old.data)) return old;
         return {
           ...old,
           data: old.data.map((u) =>
             u._id === variables.id || u.userID === variables.id
-              ? { ...u, ...variables.data }
+              ? { ...u, ...cacheData }
               : u
           ),
         };

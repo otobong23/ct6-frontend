@@ -1,26 +1,29 @@
 "use client";
+
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { PageHeader } from "@/components/PageHeader";
 import { BackPill } from "@/components/AuthShell";
 import { Button } from "@/components/Button";
+import { PageHeader } from "@/components/PageHeader";
 import { PasswordField } from "@/components/PasswordField";
+import { useAuth } from "@/context/AuthContext";
 import { userApi } from "@/lib/endpoints";
 
 export default function SecurityPage() {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<"create" | "change">("create");
+  const { user, loading: profileLoading, refreshProfile } = useAuth();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [saved, setSaved] = useState(false);
+  const [savedAction, setSavedAction] = useState<"create" | "change" | null>(null);
+  const hasWalletPassword = Boolean(user?.walletPassword);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setSaved(false);
+    setSavedAction(null);
     if (newPassword.length < 8) {
       setError(t("Wallet password must be at least 8 characters"));
       return;
@@ -29,23 +32,24 @@ export default function SecurityPage() {
       setError(t("Passwords do not match"));
       return;
     }
+    if (hasWalletPassword && !currentPassword) {
+      setError(t("Enter your current wallet password"));
+      return;
+    }
 
     setSaving(true);
     try {
-      if (mode === "create") {
-        await userApi.walletPassword.create({ newPassword });
-      } else {
-        if (!currentPassword) {
-          setError(t("Enter your current wallet password"));
-          setSaving(false);
-          return;
-        }
+      const action = hasWalletPassword ? "change" : "create";
+      if (action === "change") {
         await userApi.walletPassword.change({ currentPassword, newPassword });
+      } else {
+        await userApi.walletPassword.create({ newPassword });
       }
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setSaved(true);
+      setSavedAction(action);
+      await refreshProfile().catch(() => {});
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : t("Could not update wallet password"));
     } finally {
@@ -57,12 +61,9 @@ export default function SecurityPage() {
     <div className="dashboard-shell">
       <PageHeader right={<BackPill href="/profile" />} />
       <h1 className="section-title" style={{ marginTop: 20 }}>{t("Wallet password")}</h1>
-      <div className="profile-actions-row" style={{ marginTop: 20 }}>
-        <button type="button" className={mode === "create" ? "btn-primary btn-primary--half" : "btn-secondary btn-primary--half"} onClick={() => { setMode("create"); setError(""); setSaved(false); }}>{t("Create password")}</button>
-        <button type="button" className={mode === "change" ? "btn-primary btn-primary--half" : "btn-secondary btn-primary--half"} onClick={() => { setMode("change"); setError(""); setSaved(false); }}>{t("Change password")}</button>
-      </div>
-      <form onSubmit={handleSubmit} className="stack" style={{ marginTop: 20 }}>
-        {mode === "change" && <div>
+      {profileLoading ? <p className="text-muted" role="status">{t("Loading...")}</p> : <form onSubmit={handleSubmit} className="stack" style={{ marginTop: 20 }}>
+        <p className="panel-subtitle">{t(hasWalletPassword ? "Change your wallet password" : "Create a wallet password for withdrawals")}</p>
+        {hasWalletPassword && <div>
           <p className="field-label">{t("Current wallet password")}</p>
           <PasswordField placeholder={t("Current wallet password")} value={currentPassword} onChange={setCurrentPassword} />
         </div>}
@@ -75,9 +76,9 @@ export default function SecurityPage() {
           <PasswordField placeholder={t("Confirm wallet password")} value={confirmPassword} onChange={setConfirmPassword} />
         </div>
         {error && <p className="field-error-text" role="alert">{error}</p>}
-        {saved && <p role="status">{t("Wallet password saved successfully")}</p>}
-        <Button type="submit" disabled={saving}>{saving ? t("Saving...") : t("Save")}</Button>
-      </form>
+        {savedAction && <p role="status">{t(savedAction === "create" ? "Wallet password created successfully" : "Wallet password updated successfully")}</p>}
+        <Button type="submit" disabled={saving}>{saving ? t("Saving...") : t(hasWalletPassword ? "Change password" : "Create password")}</Button>
+      </form>}
     </div>
   );
 }

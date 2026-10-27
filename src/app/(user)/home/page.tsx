@@ -46,7 +46,7 @@ export default function HomePage() {
       <section className="assets-card">
         <span className="assets-pill">{t("Total Assets")}</span>
         <p className="assets-value">{money(user?.balance)}</p>
-        <p className="assets-meta">
+        <p className="assets-meta text-wrap">
           {t("Total Deposit:")} <span className="text-accent mr-5">{money(user?.totalDeposit)}</span>
           {t("Total Withdrawal:")} <span className="text-[#0AA521]">{money(user?.totalWithdraw)}</span>
         </p>
