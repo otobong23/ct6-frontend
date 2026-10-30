@@ -736,7 +736,7 @@ export default function CopyTradingAdminPage() {
                     {formErrors.dailyAveragePercentage && <p className="mt-1 text-xs text-red-400">{formErrors.dailyAveragePercentage}</p>}
                   </div>
                   <div>
-                    <label htmlFor="trade-min" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Minimum Investment (%)</label>
+                    <label htmlFor="trade-min" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Minimum Investment ($)</label>
                     <input
                       id="trade-min"
                       type="number"
@@ -750,7 +750,7 @@ export default function CopyTradingAdminPage() {
                     {formErrors.minInvestment && <p className="text-xs mt-1" style={{ color: "#F44336" }}>{formErrors.minInvestment}</p>}
                   </div>
                   <div>
-                    <label htmlFor="trade-max" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Maximum Investment (%)</label>
+                    <label htmlFor="trade-max" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Trade Maximum Investment ($)</label>
                     <input
                       id="trade-max"
                       type="number"
