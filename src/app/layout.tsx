@@ -3,7 +3,6 @@ import { Montserrat, Geist } from "next/font/google";
 import "./globals.css";
 import "./minor.css";
 import { cn } from "@/lib/utils";
-import I18nProvider from "@/components/I18nProvider";
 import { Providers } from "./providers";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
