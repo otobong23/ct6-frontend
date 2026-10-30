@@ -98,7 +98,6 @@ export default function DepositPage() {
       {step === "amount" && <div className="panel-card">
         <h2 className="panel-title">{t("Deposit")}</h2>
         <p className="panel-subtitle">{t("Enter exact deposit amount below")}</p>
-        <WalletNetworkInfo />
         <form onSubmit={handleContinue} className="stack">
           <div className="field">
             <span className="field-prefix">{t("$")}</span>
@@ -110,12 +109,12 @@ export default function DepositPage() {
           {error && <p className="field-error-text" role="alert">{error}</p>}
           <button type="submit" className="btn-primary" disabled={loading}>{loading ? t("Loading...") : t("Continue")}</button>
         </form>
+        <WalletNetworkInfo />
         <Remarks />
       </div>}
 
       {step === "payment" && order && <div className="panel-card">
         <h2 className="panel-title">{t("Deposit details")}</h2>
-        <WalletNetworkInfo />
         <div className="confirm-amount-box">
           <p className="confirm-amount-label">{t("Amount to Deposit")}</p>
           <p className="confirm-amount-value">{new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(order.displayAmount)}</p>
@@ -126,10 +125,7 @@ export default function DepositPage() {
         </div>}
         <p className="field-label" style={{ marginTop: 12 }}>{t("Wallet Address")}</p>
         <div className="referral-box"><p className="wallet-address-value break-all">{order.address}</p><button type="button" className="copy-btn" onClick={copyAddress} aria-label={t("Copy wallet address")}>{t(copied ? "Copied" : "Copy")}</button></div>
-        <div className="coin-network-row">
-          <div><span className="text-muted">{t("Coin")}</span><span>{order.coin}</span></div>
-          <div><span className="text-muted">{t("Network")}</span><span>{order.network}</span></div>
-        </div>
+        <WalletNetworkInfo />
         {submitted ? <>
           <p className="panel-subtitle">{t("Deposit proof submitted. An admin will review your transaction before funds are added to your balance.")}</p>
           <Link href="/home" className="btn-primary btn-link">{t("Done")}</Link>
