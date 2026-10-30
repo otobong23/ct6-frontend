@@ -31,6 +31,8 @@ interface TraderFormState {
   minInvestment: number;
   maxInvestment: number;
   trades: number[];
+  locked: boolean;
+  lockedNote: string;
 }
 
 const TRADE_COUNT = 10;
@@ -51,6 +53,8 @@ const emptyForm = (): TraderFormState => ({
   minInvestment: 10,
   maxInvestment: 20,
   trades: Array.from({ length: TRADE_COUNT }, () => 10),
+  locked: false,
+  lockedNote: "",
 });
 
 /** Build the payload the backend accepts from the richer local form state. */
@@ -74,7 +78,9 @@ function toBackendPayload(
     totalAssets: existing?.totalAssets ?? 0,
     minInvestment: form.minInvestment,
     maxInvestment: form.maxInvestment,
-    dailyAveragePercentage: form.dailyAveragePercentage
+    dailyAveragePercentage: form.dailyAveragePercentage,
+    locked: form.locked,
+    lockedNote: form.lockedNote.trim(),
   };
 }
 
@@ -182,6 +188,8 @@ export default function CopyTradingAdminPage() {
         setup.last_10_trades && setup.last_10_trades.length
           ? setup.last_10_trades.slice(0, TRADE_COUNT)
           : Array.from({ length: TRADE_COUNT }, () => 10),
+      locked: setup.locked ?? false,
+      lockedNote: setup.lockedNote ?? "",
     });
     setFormErrors({});
     setShowModal(true);
@@ -417,8 +425,9 @@ export default function CopyTradingAdminPage() {
                         </div>
                       </div>
                     </div>
-                    <span className="rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-bold text-emerald-300">Listed</span>
+                    <span className={`rounded-full px-2 py-1 text-[10px] font-bold ${setup.locked ? "bg-amber-400/10 text-amber-300" : "bg-emerald-400/10 text-emerald-300"}`}>{setup.locked ? "Locked" : "Listed"}</span>
                   </div>
+                  {setup.locked && setup.lockedNote && <p className="px-4 pt-2 text-xs text-amber-200 sm:px-5">{setup.lockedNote}</p>}
 
                   {/* Metrics grid */}
                   <div className="grid grid-cols-2 xs:grid-cols-4 gap-px mx-4 sm:mx-5 rounded-xl overflow-hidden" style={{ background: "#1d2639" }}>
@@ -684,6 +693,18 @@ export default function CopyTradingAdminPage() {
                     className="w-full px-4 py-2.5 rounded-xl text-sm placeholder:text-[#4a5568]"
                     style={{ background: "#151d2d", border: "1px solid #252f45", color: "white" }}
                   />
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-5" style={{ borderTop: "1px solid #1d2639" }}>
+                <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: "#00d4a1" }}>Availability</p>
+                <label className="flex items-center gap-3 text-sm font-medium text-white">
+                  <input type="checkbox" checked={formData.locked} onChange={(event) => setFormData((form) => ({ ...form, locked: event.target.checked }))} className="h-4 w-4 accent-emerald-400" />
+                  Lock this model for users
+                </label>
+                <div>
+                  <label htmlFor="locked-note" className="text-xs font-semibold mb-2 block" style={{ color: "#9aa3b0" }}>Lock note (optional)</label>
+                  <textarea id="locked-note" value={formData.lockedNote} onChange={(event) => setFormData((form) => ({ ...form, lockedNote: event.target.value }))} maxLength={500} rows={2} placeholder="Explain why this model is locked" className="w-full px-4 py-2.5 rounded-xl text-sm placeholder:text-[#4a5568]" style={{ background: "#151d2d", border: "1px solid #252f45", color: "white" }} />
                 </div>
               </div>
 

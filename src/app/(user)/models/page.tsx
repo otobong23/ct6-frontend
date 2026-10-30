@@ -53,6 +53,7 @@ export default function ModelsPage() {
   }, [api]);
 
   function handleActivate(model: CopyTradingResponse) {
+    if (model.locked) return;
     setActiveModel(model);
     setAmount(String(model.minInvestment));
     setActionError("");
@@ -103,7 +104,7 @@ export default function ModelsPage() {
             {plans.map((plan) => (
               <CarouselItem className="basis-[85%] pl-5" key={plan._id}>
                 <ModelCard
-                  model={{ id: plan._id, name: plan.traderName, percent: `+${plan.dailyAveragePercentage}%`, days: plan.duration, min: money(plan.minInvestment, plan.currency), max: money(plan.maxInvestment, plan.currency) }}
+                  model={{ id: plan._id, name: plan.traderName, percent: `+${plan.dailyAveragePercentage}%`, days: plan.duration, min: money(plan.minInvestment, plan.currency), max: money(plan.maxInvestment, plan.currency), locked: plan.locked ?? false, lockedNote: plan.lockedNote }}
                   onActivate={() => handleActivate(plan)}
                 />
               </CarouselItem>
