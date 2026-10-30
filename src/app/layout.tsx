@@ -17,7 +17,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "CT6",
-  description: "Log in, register, and password recovery flow for CT6",
+  description: "Modern Trading Automation",
 };
 
 export default function RootLayout({
