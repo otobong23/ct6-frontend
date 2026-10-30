@@ -49,7 +49,7 @@ export default function AiTradePage() {
         <p className="assets-value">{money(user?.balance ?? 0)}</p>
         <p className="assets-meta">{t("Total Deposit:")} <span className="text-[#6FBAFC]">{money(user?.totalDeposit ?? 0)}</span> &ensp; {t("Total Withdrawal:")} <span className="text-[#188F0D]">{money(user?.totalWithdraw ?? 0)}</span></p>
         <div className="flex justify-center items-center flex-col mt-12">
-          <RadarChartWidget />
+          <RadarChartWidget active={Boolean(earners.length)} />
           <p className="assets-pill mb-2.25 mt-12">{t("Trading")}</p>
         </div>
         {loading && <p className="text-muted text-center">{t("Loading...")}</p>}

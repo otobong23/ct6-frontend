@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Radar,
   RadarChart,
@@ -9,7 +10,9 @@ import {
 } from "recharts";
 import "@/app/RadarChartWidget.css";
 
-const data = [
+type CoinData = { coin: string; A: number; B: number; C: number };
+
+const INITIAL_DATA: CoinData[] = [
   { coin: "BTC", A: 95, B: 80, C: 100 },
   { coin: "ADA", A: 55, B: 45, C: 50 },
   { coin: "BAND", A: 85, B: 95, C: 35 },
@@ -18,7 +21,35 @@ const data = [
   { coin: "USDT", A: 90, B: 70, C: 25 },
 ];
 
-const RadarChartWidget = () => {
+const UPDATE_INTERVAL_MS = 10_000;
+
+// Random integer between min and max (inclusive)
+const randomValue = (min = 20, max = 100) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+// Returns a new dataset with fresh random figures, keeping the coin labels
+const generateRandomData = (data: CoinData[]): CoinData[] =>
+  data.map(({ coin }) => ({
+    coin,
+    A: randomValue(),
+    B: randomValue(),
+    C: randomValue(),
+  }));
+
+const RadarChartWidget = ({ active }: { active: boolean }) => {
+  const [data, setData] = useState<CoinData[]>(INITIAL_DATA);
+
+  useEffect(() => {
+    if (!active) return;
+
+    const id = setInterval(() => {
+      setData((prev) => generateRandomData(prev));
+    }, UPDATE_INTERVAL_MS);
+
+    // Cleanup runs when `active` flips to false or the component unmounts
+    return () => clearInterval(id);
+  }, [active]);
+
   return (
     <div className="radar-glow">
       <RadarChart
@@ -32,7 +63,8 @@ const RadarChartWidget = () => {
         responsive
         data={data}
         outerRadius="78%"
-      > <PolarGrid
+      >
+        <PolarGrid
           gridType="polygon"
           stroke="#34404d"
           fill="#171d25"
