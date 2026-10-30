@@ -24,6 +24,8 @@ export function TransactionDetailsModal({
   const userName = typeof userId === "object" && userId
     ? `${userId.firstName ?? ""} ${userId.lastName ?? ""}`.trim()
     : "";
+  const isReviewTransaction = transaction.type === "deposit" || transaction.type === "withdraw";
+  const availableStatuses = isReviewTransaction && transaction.status !== "pending" ? [] : statuses;
   const fields: Array<[string, string]> = [
     ["Transaction ID", transaction.transactionID || "—"],
     ["Record ID", transaction._id],
@@ -32,7 +34,8 @@ export function TransactionDetailsModal({
     ["Type", transaction.type.replaceAll("_", " ")],
     ["Amount", `${formatUSD(transaction.amount)}${transaction.currency ? ` · ${transaction.currency}` : ""}`],
     ["Created", formatTransactionDate(transaction.createdAt)],
-    ["Reference", transaction.reference || "—"],
+    [transaction.type === "deposit" ? "TXID" : "Reference", transaction.reference || "—"],
+    ...(transaction.paymentTxHash ? [["Gateway TXID", transaction.paymentTxHash] as [string, string]] : []),
     ["Destination wallet", transaction.withdrawWalletAddress || "—"],
     ["Note", transaction.note || "—"],
   ];
@@ -62,10 +65,16 @@ export function TransactionDetailsModal({
           ))}
         </div>
 
+        {transaction.proofPaymentDocument && <div className="border-t border-[#252f45] bg-[#151d2d] px-5 py-4 sm:px-6">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-penny-text-muted">Payment proof</p>
+          <a href={transaction.proofPaymentDocument} target="_blank" rel="noreferrer" className="text-xs text-emerald-300 underline">Open proof image</a>
+          {transaction.proofPaymentDocument.startsWith("data:image/") && <img src={transaction.proofPaymentDocument} alt="Deposit payment proof" className="mt-3 max-h-96 max-w-full rounded-lg object-contain" />}
+        </div>}
+
         <footer className="space-y-3 px-5 py-4 sm:px-6">
           <p className="text-xs font-semibold text-penny-text-muted">Update status</p>
           <div className="flex flex-wrap gap-2">
-            {statuses.map((status) => (
+            {availableStatuses.map((status) => (
               <button
                 key={status}
                 type="button"
@@ -76,6 +85,7 @@ export function TransactionDetailsModal({
                 {isUpdating && transaction.status !== status ? "Saving…" : status === "completed" ? "Mark completed" : status === "rejected" ? "Reject" : status === "failed" ? "Mark failed" : "Set pending"}
               </button>
             ))}
+            {availableStatuses.length === 0 && <span className="text-xs capitalize text-penny-text-muted">{transaction.status}</span>}
           </div>
           {errorMessage && <p role="alert" className="text-xs text-red-300">{errorMessage}</p>}
         </footer>

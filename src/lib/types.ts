@@ -31,7 +31,7 @@ export interface CreateTransactionDto { type: TransactionType; amount: number; c
 export interface TransactionResponse {
   _id: string; transactionID: string; userId: string | TransactionUserRef; email: string;
   type: TransactionType | "withdrawal" | "bonus"; status: TransactionStatus; amount: number;
-  currency: string; reference?: string; withdrawWalletAddress?: string; note?: string; createdAt: string;
+  currency: string; reference?: string; paymentTxHash?: string; withdrawWalletAddress?: string; proofPaymentDocument?: string; note?: string; createdAt: string;
 }
 export interface TransactionUserRef { _id: string; userID?: string; email?: string; firstName?: string; lastName?: string }
 export interface EarnerResponse { _id: string; userId: string; copyTradePurchaseId: string; dailyAveragePercentage: number; amountInvested: number; nextEarningAmount: number; nextEarningDate: string; expiresAt: string; status: "active" | "completed" | "cancelled"; lastEarningDate?: string }

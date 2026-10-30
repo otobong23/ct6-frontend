@@ -94,7 +94,7 @@ export const transactionApi = {
   getActiveEarner: () => api<GetActiveEarnerResponse>("/transactions/active-earner"),
   orders: {
     generateDepositAddress: (data: CreateUserOrderDto) => api<DepositAddressResponse>("/transactions/orders/deposit-address", { method: "POST", ...jsonBody(data) }),
-    confirmDeposit: (orderId: string) => api<DepositConfirmationResponse>(`/transactions/orders/${encodeURIComponent(orderId)}/confirm-deposit`, { method: "POST" }),
+    confirmDeposit: (orderId: string, data: { txid: string; proofPaymentDocument: string }) => api<DepositConfirmationResponse>(`/transactions/orders/${encodeURIComponent(orderId)}/confirm-deposit`, { method: "POST", ...jsonBody(data) }),
     withdraw: (data: WithdrawDto) => api<WithdrawResponse>("/transactions/orders/withdraw", { method: "POST", ...jsonBody(data) }),
   },
 };

@@ -69,7 +69,7 @@ export default function RegisterPage() {
           email: email.trim(),
           password,
           firstName,
-          lastName: lastNameParts.join(" "),
+          ...(lastNameParts.length > 0 && { lastName: lastNameParts.join(" ") }),
           phone: phone.replace(/[\s()-]/g, ""),
           referral_code: referral.trim(),
         });

@@ -1,8 +1,8 @@
-// Generate a deposit invoice for the automatic payment review service.
+// Submit payment evidence for admin review.
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { BackPill } from "@/components/AuthShell";
 import { PageHeader } from "@/components/PageHeader";
@@ -21,6 +21,10 @@ export default function DepositPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [txid, setTxid] = useState("");
+  const [proof, setProof] = useState("");
+  const [proofName, setProofName] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleContinue(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -53,11 +57,36 @@ export default function DepositPage() {
     }
   }
 
+  function handleProofChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { setError(t("Upload an image of your payment proof")); return; }
+    if (file.size > 3_500_000) { setError(t("Proof image must be smaller than 3.5 MB")); return; }
+    setError(""); setProofName(file.name);
+    const reader = new FileReader();
+    reader.onload = () => setProof(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = () => setError(t("Could not read proof image"));
+    reader.readAsDataURL(file);
+  }
+
+  async function submitProof(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!order || !txid.trim() || !proof) { setError(t("Enter your TXID and upload payment proof")); return; }
+    setLoading(true); setError("");
+    try {
+      await transactionApi.orders.confirmDeposit(order._id, { txid: txid.trim(), proofPaymentDocument: proof });
+      setSubmitted(true);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : t("Could not submit the deposit for review"));
+    } finally { setLoading(false); }
+  }
+
   function reset() {
     setStep("amount");
     setOrder(null);
     setAmount("");
     setError("");
+    setTxid(""); setProof(""); setProofName(""); setSubmitted(false);
   }
 
   return (
@@ -97,15 +126,25 @@ export default function DepositPage() {
           <div><span className="text-muted">{t("Coin")}</span><span>{order.coin}</span></div>
           <div><span className="text-muted">{t("Network")}</span><span>{order.network}</span></div>
         </div>
-        <p className="panel-subtitle">{t("Your deposit will be reviewed automatically after payment is received.")}</p>
-        <Link href="/home" className="btn-primary btn-link">{t("Done")}</Link>
-        <button type="button" className="btn-secondary" onClick={reset}>{t("Create another deposit")}</button>
+        {submitted ? <>
+          <p className="panel-subtitle">{t("Deposit proof submitted. An admin will review your transaction before funds are added to your balance.")}</p>
+          <Link href="/home" className="btn-primary btn-link">{t("Done")}</Link>
+          <button type="button" className="btn-secondary" onClick={reset}>{t("Create another deposit")}</button>
+        </> : <form onSubmit={submitProof} className="stack">
+          <label className="field-label" htmlFor="deposit-txid">{t("TXID")}</label>
+          <input id="deposit-txid" className="field-input" value={txid} onChange={(event) => setTxid(event.target.value)} placeholder={t("Enter transaction ID")} required />
+          <label className="field-label" htmlFor="deposit-proof">{t("Payment proof")}</label>
+          <input id="deposit-proof" className="field-input" type="file" accept="image/*" onChange={handleProofChange} required />
+          {proofName && <p className="panel-subtitle">{proofName}</p>}
+          {proof && <img src={proof} alt={t("Payment proof preview")} className="max-h-64 rounded-lg object-contain" />}
+          {error && <p className="field-error-text" role="alert">{error}</p>}
+          <button type="submit" className="btn-primary" disabled={loading}>{loading ? t("Submitting...") : t("Submit for review")}</button>
+        </form>}
         <Remarks />
       </div>}
     </div>
   );
 }
-
 function Remarks() {
   const { t } = useTranslation();
   return <div className="remark-list">
