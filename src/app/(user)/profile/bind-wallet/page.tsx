@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 import { BackPill } from "@/components/AuthShell";
 import { Button } from "@/components/Button";
 import { PageHeader } from "@/components/PageHeader";
@@ -10,6 +11,7 @@ import { PasswordField } from "@/components/PasswordField";
 import { TextField } from "@/components/TextField";
 import { useAuth } from "@/context/AuthContext";
 import { userApi } from "@/lib/endpoints";
+import usdtBep20Image from "@/assets/images/USDT-BEP20.png";
 
 export default function BindWalletPage() {
   const { t } = useTranslation();
@@ -67,6 +69,13 @@ export default function BindWalletPage() {
       <h1 className="section-title" style={{ marginTop: 20 }}>{t("Bind wallet address")}</h1>
       {profileLoading || needsPasswordSetup ? <p className="text-muted" role="status">{t("Loading...")}</p> : <form onSubmit={handleSubmit} className="stack" style={{ marginTop: 20 }}>
         <p className="panel-subtitle">{t("Your wallet password is required to update your withdrawal address.")}</p>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="flex items-center gap-3">
+            <Image src={usdtBep20Image} alt="USDT BEP20" width={52} height={52} className="rounded-full" />
+            <div className="grid gap-1"><span><span className="text-muted">{t("Coin")}</span> <strong>USDT</strong></span><span><span className="text-muted">{t("Network")}</span> <strong>BEP20</strong></span></div>
+          </div>
+          <p className="mt-3 text-sm text-amber-300">{t("Please Make sure the Address You Enter Suppors BEP20 Transfers. Using Other Networks May Result in Failed Deposit or Withdrawal")}</p>
+        </div>
         <div>
           <p className="field-label">{t("Withdrawal wallet address")}</p>
           <TextField autoComplete="off" placeholder={t("Enter wallet address")} value={walletAddress} onChange={(event) => setWalletAddress(event.target.value)} required />

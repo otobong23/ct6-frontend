@@ -190,8 +190,8 @@ export default function CopyTradingAdminPage() {
   const validateForm = () => {
     const errs: Record<string, string> = {};
     if (!formData.traderName.trim()) errs.traderName = "Trader name is required";
-    if (formData.minInvestment < 0 || formData.minInvestment > 100) errs.minInvestment = "Minimum investment must be between 0 and 100";
-    if (formData.maxInvestment <= 0 || formData.maxInvestment > 100) errs.maxInvestment = "Maximum investment must be between 0 and 100";
+    if (formData.minInvestment < 0) errs.minInvestment = "Minimum investment must be between 0 and 100";
+    if (formData.maxInvestment <= 0) errs.maxInvestment = "Maximum investment must be between 0 and 100";
     if (formData.minInvestment > formData.maxInvestment) errs.minInvestment = "Minimum investment cannot exceed maximum investment";
     if (formData.dailyAveragePercentage < 0) errs.dailyAveragePercentage = "Daily average percentage cannot be negative";
     setFormErrors(errs);
@@ -432,7 +432,7 @@ export default function CopyTradingAdminPage() {
                     </div>
                     <div className="p-3" style={{ background: "#0d1624" }}>
                       <p className="text-[10px]" style={{ color: "#6b7785" }}>Investment range</p>
-                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>{setup.minInvestment}% – {setup.maxInvestment}%</p>
+                      <p className="text-sm font-bold mt-0.5" style={{ color: "#F5C518" }}>${setup.minInvestment} – ${setup.maxInvestment}</p>
                     </div>
                     <div className="p-3" style={{ background: "#0d1624" }}>
                       <p className="text-[10px]" style={{ color: "#6b7785" }}>Copies</p>
@@ -560,7 +560,7 @@ export default function CopyTradingAdminPage() {
                           </span>
                         </div>
                         <p className="text-xs mt-0.5" style={{ color: "#6b7785" }}>
-                          User: <span className="text-white font-medium">{userName}</span> · {trade.duration} · {trade.minInvestment}% – {trade.maxInvestment}%
+                          User: <span className="text-white font-medium">{userName}</span> · {trade.duration} · ${trade.minInvestment} – ${trade.maxInvestment}
                         </p>
                       </div>
                     </div>
@@ -741,7 +741,6 @@ export default function CopyTradingAdminPage() {
                       id="trade-min"
                       type="number"
                       min="0"
-                      max="100"
                       step="0.01"
                       value={formData.minInvestment}
                       onChange={(e) => setFormData((form) => ({ ...form, minInvestment: Number(e.target.value) || 0 }))}
@@ -756,7 +755,6 @@ export default function CopyTradingAdminPage() {
                       id="trade-max"
                       type="number"
                       min="0"
-                      max="100"
                       step="0.01"
                       value={formData.maxInvestment}
                       onChange={(e) => setFormData((form) => ({ ...form, maxInvestment: Number(e.target.value) || 0 }))}

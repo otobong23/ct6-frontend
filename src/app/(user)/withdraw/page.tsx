@@ -23,6 +23,8 @@ export default function WithdrawPage() {
   const [step, setStep] = useState<"form" | "result">("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const enteredAmount = Number(amount);
+  const withdrawalFee = Number.isFinite(enteredAmount) && enteredAmount > 0 ? enteredAmount * 0.1 : 0;
 
   useEffect(() => {
     if (profileLoading || !user) return;
@@ -78,6 +80,16 @@ export default function WithdrawPage() {
         <h2 className="panel-title">{t("Withdraw")}</h2>
         <p className="panel-subtitle">{t("Enter exact Withdrawal amount below")}</p>
         {user && <p className="text-muted">{t("Available balance")}: {new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(user.balance)}</p>}
+        <div className="my-4 rounded-xl border border-white/10 bg-white/5 p-4">
+          <p className="font-semibold">{t("Withdrawal fees")}</p>
+          <div className="mt-2 grid gap-2 text-sm">
+            <p>{t("Minimum withdrawal amount")}: <strong>12 USDT</strong></p>
+            <p>{t("Withdrawal fee rate")}: <strong>10%</strong></p>
+            <p>{t("Withdrawal fee")}: <strong>{withdrawalFee.toFixed(2)} USDT</strong></p>
+          </div>
+          <p className="mt-3 text-sm text-muted">{t("Arrival Amount = Withdrawal Amount - Withdrawal Amount x Fee Rate - Gas Fee (1 USDT).")}</p>
+        </div>
+        <p className="mb-4 text-sm text-amber-300">{t("Please Make sure the Address You Enter Suppors BEP20 Transfers. Using Other Networks May Result in Failed Deposit or Withdrawal")}</p>
         <form onSubmit={handleSubmit} className="stack">
           <div className="field"><span className="field-prefix">{t("$")}</span><input className="field-input" type="number" min="12" step="0.01" placeholder={t("Enter Withdrawal amount")} value={amount} onChange={(event) => setAmount(event.target.value)} required /></div>
           {user?.walletAddress && <p className="panel-subtitle">{t("Withdrawal address")}: <span className="break-all">{user.walletAddress}</span></p>}

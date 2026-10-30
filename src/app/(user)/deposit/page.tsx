@@ -10,6 +10,8 @@ import QR_codeGenerator from "@/components/QR_codeGenerator";
 import { transactionApi } from "@/lib/endpoints";
 import type { UserOrderResponse } from "@/lib/types";
 import Link from "next/link";
+import Image from "next/image";
+import usdtBep20Image from "@/assets/images/USDT-BEP20.png";
 
 const quickAmounts = ["50", "100", "200", "500", "1000"];
 
@@ -96,6 +98,7 @@ export default function DepositPage() {
       {step === "amount" && <div className="panel-card">
         <h2 className="panel-title">{t("Deposit")}</h2>
         <p className="panel-subtitle">{t("Enter exact deposit amount below")}</p>
+        <WalletNetworkInfo />
         <form onSubmit={handleContinue} className="stack">
           <div className="field">
             <span className="field-prefix">{t("$")}</span>
@@ -112,6 +115,7 @@ export default function DepositPage() {
 
       {step === "payment" && order && <div className="panel-card">
         <h2 className="panel-title">{t("Deposit details")}</h2>
+        <WalletNetworkInfo />
         <div className="confirm-amount-box">
           <p className="confirm-amount-label">{t("Amount to Deposit")}</p>
           <p className="confirm-amount-value">{new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(order.displayAmount)}</p>
@@ -144,6 +148,16 @@ export default function DepositPage() {
       </div>}
     </div>
   );
+}
+function WalletNetworkInfo() {
+  const { t } = useTranslation();
+  return <div className="my-4 rounded-xl border border-white/10 bg-white/5 p-4">
+    <div className="flex items-center gap-3">
+      <Image src={usdtBep20Image} alt="USDT BEP20" width={52} height={52} className="rounded-full" />
+      <div className="grid gap-1"><span><span className="text-muted">{t("Coin")}</span> <strong>USDT</strong></span><span><span className="text-muted">{t("Network")}</span> <strong>BEP20</strong></span></div>
+    </div>
+    <p className="mt-3 text-sm text-amber-300">{t("Please Make sure the Address You Enter Suppors BEP20 Transfers. Using Other Networks May Result in Failed Deposit or Withdrawal")}</p>
+  </div>;
 }
 function Remarks() {
   const { t } = useTranslation();
