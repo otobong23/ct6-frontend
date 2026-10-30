@@ -78,6 +78,7 @@ export const userApi = {
   profile: {
     get: () => api<UserProfile>("/user/profile"),
     update: (data: UpdateProfileDto) => api<UserProfile>("/user/profile", { method: "PATCH", ...jsonBody(data) }),
+    bindWalletAddress: (data: { walletAddress: string; walletPassword: string }) => api<SuccessMessageResponse & { walletAddress: string }>("/user/wallet-address", { method: "PATCH", ...jsonBody(data) }),
     deleteAccount: () => api<ApiMessageResponse>("/user/account", { method: "DELETE" }),
   },
   walletPassword: {

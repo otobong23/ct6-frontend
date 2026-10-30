@@ -14,6 +14,7 @@ import { useAuth } from "@/context/AuthContext";
 const menuItems = [
   { label: "History", href: "/profile/history", icon: "mingcute:history-fill" },
   { label: "Profile settings", href: "/profile/profile-settings", icon: "solar:settings-bold" },
+  { label: "Bind wallet address", href: "/profile/bind-wallet", icon: "solar:wallet-bold" },
   { label: "Notification", href: "/profile/notifications", icon: "reicon:notification-status-filled" },
   { label: "Security", href: "/profile/security", icon: "reicon:security-user-filled" },
   { label: "Help & Support", href: "/profile/help", icon: "streamline-plump:customer-support-3-solid" },

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { BackPill } from "@/components/AuthShell";
 import { Button } from "@/components/Button";
@@ -11,6 +12,7 @@ import { userApi } from "@/lib/endpoints";
 
 export default function SecurityPage() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { user, loading: profileLoading, refreshProfile } = useAuth();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -18,7 +20,13 @@ export default function SecurityPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [savedAction, setSavedAction] = useState<"create" | "change" | null>(null);
+  const [returnTo, setReturnTo] = useState("");
   const hasWalletPassword = Boolean(user?.walletPassword);
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("returnTo") || "";
+    setReturnTo(requested.startsWith("/") && !requested.startsWith("//") ? requested : "");
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -50,6 +58,7 @@ export default function SecurityPage() {
       setConfirmPassword("");
       setSavedAction(action);
       await refreshProfile().catch(() => {});
+      if (action === "create" && returnTo) router.replace(returnTo);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : t("Could not update wallet password"));
     } finally {

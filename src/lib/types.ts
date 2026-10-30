@@ -37,7 +37,7 @@ export interface TransactionUserRef { _id: string; userID?: string; email?: stri
 export interface EarnerResponse { _id: string; userId: string; copyTradePurchaseId: string; dailyAveragePercentage: number; amountInvested: number; nextEarningAmount: number; nextEarningDate: string; expiresAt: string; status: "active" | "completed" | "cancelled"; lastEarningDate?: string }
 export interface GetActiveEarnerResponse { success: boolean; earners: EarnerResponse[] }
 export interface CreateUserOrderDto { amount: number }
-export interface WithdrawDto { amount: number; walletAddress?: string; walletPassword: string }
+export interface WithdrawDto { amount: number; walletPassword: string }
 export interface UserOrderResponse {
   _id: string; invoiceId: string; email: string; displayAmount: number; expectedAmount?: number;
   status: "pending" | "completed" | "failed"; coin: string; network: "BEP20" | "TRC20";
