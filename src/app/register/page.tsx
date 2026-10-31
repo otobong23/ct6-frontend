@@ -39,7 +39,7 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const referralCode = new URLSearchParams(window.location.search).get("referral_code");
+    const referralCode = new URLSearchParams(window.location.search).get("invitation_code");
     if (referralCode) setReferral(referralCode);
   }, []);
 

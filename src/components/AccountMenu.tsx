@@ -21,9 +21,9 @@ export function AccountMenu() {
   return (
     <div className="account-menu-wrap">
       <div className="header-icons">
-        <button className="icon-btn" type="button" aria-label={t("Wallet")}>
+        <Link href="/profile/notifications" className="icon-btn" type="button" aria-label={t("Wallet")}>
           <Icon icon="reicon:notification-status-filled" width="24" />
-        </button>
+        </Link>
         <button
           className="icon-btn"
           type="button"

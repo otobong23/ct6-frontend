@@ -87,9 +87,9 @@ export default function WithdrawPage() {
             <p>{t("Withdrawal fee rate")}: <strong>10%</strong></p>
             <p>{t("Withdrawal fee")}: <strong>{withdrawalFee.toFixed(2)} USDT</strong></p>
           </div>
-          <p className="mt-3 text-sm text-muted">{t("Arrival Amount = Withdrawal Amount - Withdrawal Amount x Fee Rate - Gas Fee (1 USDT).")}</p>
+          <p className="mt-3 text-sm text-muted">{t("Arrival Amount = Withdrawal Amount - Withdrawal Amount x Fee Rate")}</p>
         </div>
-        <p className="mb-4 text-sm text-amber-300">{t("Please Make sure the Address You Enter Suppors BEP20 Transfers. Using Other Networks May Result in Failed Deposit or Withdrawal")}</p>
+        <p className="mb-4 text-sm text-amber-300">{t("Please Make sure the Address You Enter Suppors BEP20 Transfers. Using Other Networks May Result in Failed Withdrawal")}</p>
         <form onSubmit={handleSubmit} className="stack">
           <div className="field"><span className="field-prefix">{t("$")}</span><input className="field-input" type="number" min="12" step="0.01" placeholder={t("Enter Withdrawal amount")} value={amount} onChange={(event) => setAmount(event.target.value)} required /></div>
           {user?.walletAddress && <p className="panel-subtitle">{t("Withdrawal address")}: <span className="break-all">{user.walletAddress}</span></p>}
@@ -115,9 +115,9 @@ function Remarks() {
   return <div className="remark-list">
     <p className="remark-title">{t("Remark")}</p>
     <ol>
-      <li>{t("Please do not add assets to accounts other than the official account, otherwise the assets will not be retrieved.")}</li>
+      <li>{t("Please do not add assets to accounts other than the official account, otherwise the assets will not be retrieved and may result in loss of funds, and the platform will not be respnsible.")}</li>
       <li>{t("The Withdrawal amount must be exactly the same as the actual order amount.")}</li>
-      <li>{t("withdrawalArrivalNote", { defaultValue: "The Withdrawal arrival time is based on the bank arrival time. It usually arrives within 5-10 minutes. If it does not arrive after more than 48 hours, please contact the manager for verification." })}</li>
+      <li>{t("withdrawalArrivalNote", { defaultValue: "The Withdrawal arrival time is within 0-96 minutes. If it does not arrive after more than 48 hours, please contact the manager for verification." })}</li>
     </ol>
   </div>;
 }

@@ -38,7 +38,7 @@ export default function TeamPage() {
 
   useEffect(() => {
     if (!referralCode) return;
-    setReferralLink(`${window.location.origin}/register?referral_code=${encodeURIComponent(referralCode)}`);
+    setReferralLink(`${window.location.origin}/register?invitation_code=${encodeURIComponent(referralCode)}`);
   }, [referralCode]);
 
   async function copy(value: string, label: string) {

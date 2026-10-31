@@ -152,7 +152,7 @@ function WalletNetworkInfo() {
       <Image src={usdtBep20Image} alt="USDT BEP20" width={52} height={52} className="rounded-full" />
       <div className="grid gap-1"><span><span className="text-muted">{t("Coin")}</span> <strong>USDT</strong></span><span><span className="text-muted">{t("Network")}</span> <strong>BEP20</strong></span></div>
     </div>
-    <p className="mt-3 text-sm text-amber-300">{t("Please Make sure the Address You Enter Suppors BEP20 Transfers. Using Other Networks May Result in Failed Deposit or Withdrawal")}</p>
+    <p className="mt-3 text-sm text-amber-300">{t("Please Make sure the Address You Enter Suppors BEP20 Transfers. Using Other Networks May Result in Failed Deposit")}</p>
   </div>;
 }
 function Remarks() {
@@ -162,7 +162,7 @@ function Remarks() {
     <ol>
       <li>{t("Please do not add assets to accounts other than the official account, otherwise the assets will not be retrieved.")}</li>
       <li>{t("The Deposit amount must be exactly the same as the actual order amount.")}</li>
-      <li>{t("depositArrivalNote", { defaultValue: "The Deposit arrival time is based on the bank arrival time. It usually arrives within 5-10 minutes. If it does not arrive after more than 48 hours, please contact the manager for verification." })}</li>
+      <li>{t("depositArrivalNote", { defaultValue: "The Deposit arrival time is within 0-96 minutes. If it does not arrive after more than 48 hours, please contact the manager for verification." })}</li>
     </ol>
   </div>;
 }

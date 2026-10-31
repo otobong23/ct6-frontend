@@ -12,7 +12,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/context/AuthContext";
 
 const actions = [
-  { label: "Recharge", icon: "solar:money-bag-bold", link: "/models" },
+  { label: "Recharge", icon: "solar:money-bag-bold", link: "/deposit" },
   { label: "withdraw", icon: "ion:card", link: "/withdraw" },
   { label: "Help", icon: "streamline-plump:customer-support-3-solid", link: "/profile/help" },
   { label: "Team", icon: "fluent:people-team-28-filled", link: "/team" },
