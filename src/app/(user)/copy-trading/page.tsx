@@ -54,16 +54,16 @@ function PurchaseCard({ purchase, onAddFunds }: { purchase: CopyTradePurchaseRes
           <p className="text-[10px] text-penny-text-muted">Amount invested</p>
           <p className="mt-1 text-sm font-bold text-white">{formatMoney(purchase.amountInvested, currency)}</p>
         </div>
-        <div className="rounded-xl bg-[#0d1624] p-3">
+        {/* <div className="rounded-xl bg-[#0d1624] p-3">
           <p className="text-[10px] text-penny-text-muted">Live PnL</p>
           <p className={`mt-1 text-sm font-bold ${pnlPositive ? "text-emerald-300" : "text-red-300"}`}>{pnlPositive ? "+" : ""}{formatMoney(pnl, currency)}</p>
-        </div>
-        <div className="rounded-xl bg-[#0d1624] p-3">
+        </div> */}
+        {/* <div className="rounded-xl bg-[#0d1624] p-3">
           <p className="text-[10px] text-penny-text-muted">Return</p>
           <p className={`mt-1 text-sm font-bold ${pnlPositive ? "text-emerald-300" : "text-red-300"}`}>
             {purchase.amountInvested > 0 ? `${pnlPositive ? "+" : ""}${((pnl / purchase.amountInvested) * 100).toFixed(2)}%` : "—"}
           </p>
-        </div>
+        </div> */}
         <div className="rounded-xl bg-[#0d1624] p-3">
           <p className="text-[10px] text-penny-text-muted">Daily average</p>
           <p className="mt-1 text-sm font-semibold text-white">{purchase.dailyAveragePercentage}%</p>
@@ -82,7 +82,7 @@ function PurchaseCard({ purchase, onAddFunds }: { purchase: CopyTradePurchaseRes
         </div>
         <div className="rounded-xl bg-[#0d1624] p-3">
           <p className="text-[10px] text-penny-text-muted">Total assets</p>
-          <p className="mt-1 text-sm font-semibold text-white">{formatMoney(purchase.totalAssets, currency)}</p>
+          <p className="mt-1 text-sm font-semibold text-white">{purchase.totalAssets.toLocaleString()}</p>
         </div>
         <div className="rounded-xl bg-[#0d1624] p-3">
           <p className="text-[10px] text-penny-text-muted">Copies</p>
@@ -99,7 +99,7 @@ function PurchaseCard({ purchase, onAddFunds }: { purchase: CopyTradePurchaseRes
         </div>}
       </div>
 
-      {isActive && <button type="button" onClick={onAddFunds} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#35D7A2] to-[#04A180] px-4 py-3 text-sm font-bold text-[#04170f]">
+      {isActive && <button type="button" onClick={onAddFunds} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#35D7A2] to-[#04A180] px-4 py-3 text-sm font-bold text-[#04170f]">
         <Icon icon="mdi:plus-circle-outline" width={19} /> Add funds
       </button>}
     </article>
@@ -156,7 +156,7 @@ export default function MyCopyTradesPage() {
   }
 
   return (
-    <main className="dashboard-shell !pb-28">
+    <main className="dashboard-shell pb-28!">
       <PageHeader right={<AccountMenu />} />
       <section className="px-4 pb-6 pt-5">
         <div className="mb-5">
@@ -180,7 +180,7 @@ export default function MyCopyTradesPage() {
         </div>}
       </section>
 
-      {fundingPurchase && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget && !addFundsMutation.isPending) setFundingPurchase(null); }}>
+      {fundingPurchase && <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/70 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget && !addFundsMutation.isPending) setFundingPurchase(null); }}>
         <section role="dialog" aria-modal="true" aria-labelledby="add-funds-title" className="w-full max-w-md rounded-2xl border border-[#252f45] bg-[#151d2d] p-5 sm:p-6">
           <div className="mb-5 flex items-start justify-between gap-4">
             <div>
@@ -206,7 +206,7 @@ export default function MyCopyTradesPage() {
             {fundError && <p role="alert" className="text-xs text-red-300">{fundError}</p>}
             <div className="flex gap-3 pt-1">
               <button type="button" disabled={addFundsMutation.isPending} onClick={() => setFundingPurchase(null)} className="flex-1 rounded-xl border border-[#303b50] px-4 py-3 text-sm font-semibold text-penny-text-muted disabled:opacity-50">Cancel</button>
-              <button type="submit" disabled={addFundsMutation.isPending || !amount} className="flex-1 rounded-xl bg-gradient-to-r from-[#35D7A2] to-[#04A180] px-4 py-3 text-sm font-bold text-[#04170f] disabled:opacity-50">{addFundsMutation.isPending ? "Adding funds…" : "Confirm"}</button>
+              <button type="submit" disabled={addFundsMutation.isPending || !amount} className="flex-1 rounded-xl bg-linear-to-r from-[#35D7A2] to-[#04A180] px-4 py-3 text-sm font-bold text-[#04170f] disabled:opacity-50">{addFundsMutation.isPending ? "Adding funds…" : "Confirm"}</button>
             </div>
           </form>
         </section>

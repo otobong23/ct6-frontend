@@ -115,7 +115,7 @@ function Remarks() {
   return <div className="remark-list">
     <p className="remark-title">{t("Remark")}</p>
     <ol>
-      <li>{t("Please do not add assets to accounts other than the official account, otherwise the assets will not be retrieved and may result in loss of funds, and the platform will not be respnsible.")}</li>
+      <li>{t("Please make sure the withdrawal address and network are correct. Incorrect information may result to loss of funds, and the platform won't be responsible")}</li>
       <li>{t("The Withdrawal amount must be exactly the same as the actual order amount.")}</li>
       <li>{t("withdrawalArrivalNote", { defaultValue: "The Withdrawal arrival time is within 0-96 minutes. If it does not arrive after more than 48 hours, please contact the manager for verification." })}</li>
     </ol>

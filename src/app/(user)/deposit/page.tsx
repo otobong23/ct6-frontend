@@ -162,7 +162,7 @@ function Remarks() {
     <ol>
       <li>{t("Please do not add assets to accounts other than the official account, otherwise the assets will not be retrieved.")}</li>
       <li>{t("The Deposit amount must be exactly the same as the actual order amount.")}</li>
-      <li>{t("depositArrivalNote", { defaultValue: "The Deposit arrival time is within 0-96 minutes. If it does not arrive after more than 48 hours, please contact the manager for verification." })}</li>
+      <li>{t("depositArrivalNote", { defaultValue: "The Deposit arrival time is within 5-10 minutes. If it does not arrive after more than 24 hours, please contact the manager for verification." })}</li>
     </ol>
   </div>;
 }
