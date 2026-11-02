@@ -5,23 +5,28 @@ import cardano from "@/assets/coins/cardano.svg";
 import tron from "@/assets/coins/tron.svg";
 import tether from "@/assets/coins/tether.svg";
 import doge from "@/assets/coins/doge.svg";
+import type { StaticImageData } from "next/image";
 
 export type Coin = {
-  icon: any,
+  id: string;
   symbol: string;
   name: string;
-  price: string;
-  change?: string;
-  addFunds?: boolean;
+  icon?: StaticImageData;
 };
 
 export const coins: Coin[] = [
-  { icon: bitcoin, symbol: "BTC", name: "Bitcoin", price: "$1,760", addFunds: true },
-  { icon: ethereum, symbol: "ETH", name: "Ethereum", price: "$134,876", change: "+2.30%" },
-  { icon: band, symbol: "BAND", name: "Band Protocol", price: "$134,876", change: "+2.30%" },
-  { icon: cardano, symbol: "ADA", name: "Cardano", price: "$134,876", change: "+2.30%" },
-  { icon: tron, symbol: "TRX", name: "TRON", price: "$134,876", change: "+2.30%" },
-  { icon: tether, symbol: "USDT", name: "Tether", price: "$134,876", change: "+2.30%" },
-  { icon: doge, symbol: "DOGE", name: "Dogecoin", price: "$134,876",change: "+2.30%",
-  }
+  { id: "bitcoin", symbol: "BTC", name: "Bitcoin", icon: bitcoin },
+  { id: "ethereum", symbol: "ETH", name: "Ethereum", icon: ethereum },
+  { id: "band-protocol", symbol: "BAND", name: "Band Protocol", icon: band },
+  { id: "cardano", symbol: "ADA", name: "Cardano", icon: cardano },
+  { id: "tron", symbol: "TRX", name: "TRON", icon: tron },
+  { id: "tether", symbol: "USDT", name: "Tether", icon: tether },
+  { id: "dogecoin", symbol: "DOGE", name: "Dogecoin", icon: doge },
+  { id: "binancecoin", symbol: "BNB", name: "BNB" },
+  { id: "solana", symbol: "SOL", name: "Solana" },
+  { id: "ripple", symbol: "XRP", name: "XRP" },
+  { id: "usd-coin", symbol: "USDC", name: "USD Coin" },
+  { id: "avalanche-2", symbol: "AVAX", name: "Avalanche" },
+  { id: "chainlink", symbol: "LINK", name: "Chainlink" },
+  { id: "bitcoin-cash", symbol: "BCH", name: "Bitcoin Cash" },
 ];

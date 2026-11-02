@@ -1710,6 +1710,17 @@ option {
   color: var(--color-ct6-accent);
 }
 
+.coin-change--negative {
+  color: #ff8585;
+}
+
+.market-updated {
+  margin: 12px 4px 0;
+  color: #cdcdcd;
+  font-size: 11px;
+  text-align: right;
+}
+
 .add-funds-link {
   margin: 2px 0 0;
   font-size: 12px;

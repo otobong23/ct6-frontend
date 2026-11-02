@@ -5,9 +5,8 @@ import { Icon } from "@iconify/react";
 import { AccountMenu } from "@/components/AccountMenu";
 import { WalletChart } from "@/components/WalletCharts";
 import { BottomNav } from "@/components/BottomNav";
-import { coins } from "@/lib/coins";
+import { CoinMarketList } from "@/components/CoinMarketList";
 import { Logo } from "@/components/Logo";
-import Image from "next/image";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/context/AuthContext";
 
@@ -69,6 +68,7 @@ export default function HomePage() {
         ))}
       </section>
 
+      {/* Portfolios */}
       <section className="section-block">
         <div className="section-header">
           <h2 className="section-title">{t("Trending Portfolios")}</h2>
@@ -77,29 +77,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="coin-list">
-          {coins.map((coin, i) => (
-            <div className="coin-row" key={i}>
-              <span
-                className="coin-icon"
-              >
-                <Image src={coin.icon} alt={coin.name} width={30} />
-              </span>
-              <div className="coin-info">
-                <p className="coin-name">{coin.name}</p>
-                <p className="coin-symbol">{coin.symbol}</p>
-              </div>
-              <div className="coin-value">
-                <p className="coin-price">{coin.price}</p>
-                {coin.addFunds ? (
-                  <Link href="/deposit" className="add-funds-link">+{t("Add Funds")}</Link>
-                ) : (
-                  <p className="coin-change">{coin.change}</p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        <CoinMarketList compact />
 
         <p className="footer-copyright">{t("2026, CT6 Copyright")}</p>
       </section>
