@@ -3,7 +3,7 @@ const hi = {
   "Home": "होम", "Models": "मॉडल", "AI trade": "AI ट्रेड", "Team": "टीम", "Profile": "प्रोफ़ाइल",
   "Deposit": "जमा करें", "Withdraw": "निकासी", "Total Assets": "कुल संपत्ति", "Trading": "ट्रेडिंग",
   "Trending Portfolios": "लोकप्रिय पोर्टफ़ोलियो", "See all": "सभी देखें", "Add Funds": "फ़ंड जोड़ें",
-  "Welcome CTSix": "स्वागत है CTSix", "Make you first Investment today": "आज ही अपना पहला निवेश करें",
+  "Welcome CTSix": "स्वागत है CTSix", "Think Growth. Trade Smart. Move Forward.": "विकास की सोचें। समझदारी से ट्रेड करें। आगे बढ़ें।",
   "Invest Today": "आज ही निवेश करें", "Copy Trading": "कॉपी ट्रेडिंग", "Follow proven trade patterns. Copy their moves. Earn with strategy.": "सिद्ध ट्रेड पैटर्न का अनुसरण करें। उनकी चालें कॉपी करें। रणनीति से कमाएँ।",
   "Daily earnings": "दैनिक आय", "Min": "न्यूनतम", "investment": "निवेश", "amount:": "राशि:", "Max": "अधिकतम", "Locked": "लॉक", "Activate": "सक्रिय करें",
   "History": "इतिहास", "Bank details": "बैंक विवरण", "Profile settings": "प्रोफ़ाइल सेटिंग्स", "Notification": "सूचनाएँ", "Security": "सुरक्षा", "Help & Support": "सहायता और सपोर्ट", "Terms & Conditions": "नियम और शर्तें", "Logout": "लॉग आउट",

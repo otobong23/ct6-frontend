@@ -36,7 +36,7 @@ export default function HomePage() {
 
       <section className="banner">
         <p className="banner-eyebrow">{t("Welcome CTSix")}</p>
-        <p className="banner-title">{t("Make you first Investment today")}</p>
+        <p className="banner-title">{t("Think Growth. Trade Smart. Move Forward.")}</p>
         <Link href="/deposit" type="button" className="banner-btn">
           {t("Invest Today")}
         </Link>

@@ -3,7 +3,7 @@ const ja = {
   "Home": "ホーム", "Models": "モデル", "AI trade": "AIトレード", "Team": "チーム", "Profile": "プロフィール",
   "Deposit": "入金", "Withdraw": "出金", "Total Assets": "総資産", "Trading": "トレード",
   "Trending Portfolios": "人気のポートフォリオ", "See all": "すべて見る", "Add Funds": "資金を追加",
-  "Welcome CTSix": "ようこそ CTSix さん", "Make you first Investment today": "今日、最初の投資を始めましょう",
+  "Welcome CTSix": "ようこそ CTSix さん", "Think Growth. Trade Smart. Move Forward.": "成長を見据え、賢く取引し、前進しましょう。",
   "Invest Today": "今すぐ投資", "Copy Trading": "コピートレード", "Follow proven trade patterns. Copy their moves. Earn with strategy.": "実績あるトレードパターンに従い、その動きをコピー。戦略で稼ぎましょう。",
   "Daily earnings": "日次収益", "Min": "最小", "investment": "投資", "amount:": "金額：", "Max": "最大", "Locked": "ロック中", "Activate": "有効化",
   "History": "履歴", "Bank details": "銀行情報", "Profile settings": "プロフィール設定", "Notification": "通知", "Security": "セキュリティ", "Help & Support": "ヘルプとサポート", "Terms & Conditions": "利用規約", "Logout": "ログアウト",

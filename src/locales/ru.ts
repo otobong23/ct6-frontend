@@ -3,7 +3,7 @@ const ru = {
   "Home": "Главная", "Models": "Модели", "AI trade": "ИИ-трейдинг", "Team": "Команда", "Profile": "Профиль",
   "Deposit": "Пополнить", "Withdraw": "Вывести", "Total Assets": "Всего активов", "Trading": "Трейдинг",
   "Trending Portfolios": "Популярные портфели", "See all": "Смотреть все", "Add Funds": "Пополнить баланс",
-  "Welcome CTSix": "Добро пожаловать, CTSix", "Make you first Investment today": "Сделайте первую инвестицию сегодня",
+  "Welcome CTSix": "Добро пожаловать, CTSix", "Think Growth. Trade Smart. Move Forward.": "Думайте о росте. Торгуйте разумно. Двигайтесь вперёд.",
   "Invest Today": "Инвестируйте сегодня", "Copy Trading": "Копи-трейдинг", "Follow proven trade patterns. Copy their moves. Earn with strategy.": "Следуйте проверенным торговым стратегиям. Копируйте их действия. Зарабатывайте со стратегией.",
   "Daily earnings": "Ежедневный доход", "Min": "Мин.", "investment": "инвестиция", "amount:": "сумма:", "Max": "Макс.", "Locked": "Заблокировано", "Activate": "Активировать",
   "History": "История", "Bank details": "Банковские реквизиты", "Profile settings": "Настройки профиля", "Notification": "Уведомления", "Security": "Безопасность", "Help & Support": "Помощь и поддержка", "Terms & Conditions": "Условия использования", "Logout": "Выйти",

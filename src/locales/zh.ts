@@ -3,7 +3,7 @@ const zh = {
   "Home": "首页", "Models": "模型", "AI trade": "AI交易", "Team": "团队", "Profile": "个人资料",
   "Deposit": "充值", "Withdraw": "提现", "Total Assets": "总资产", "Trading": "交易",
   "Trending Portfolios": "热门投资组合", "See all": "查看全部", "Add Funds": "添加资金",
-  "Welcome CTSix": "欢迎 CTSix", "Make you first Investment today": "今天就开始您的第一笔投资",
+  "Welcome CTSix": "欢迎 CTSix", "Think Growth. Trade Smart. Move Forward.": "着眼成长，聪明交易，稳步前行。",
   "Invest Today": "立即投资", "Copy Trading": "跟单交易", "Follow proven trade patterns. Copy their moves. Earn with strategy.": "跟随经过验证的交易模式，复制他们的操作，用策略赚取收益。",
   "Daily earnings": "每日收益", "Min": "最低", "investment": "投资", "amount:": "金额：", "Max": "最高", "Locked": "已锁定", "Activate": "激活",
   "History": "历史记录", "Bank details": "银行信息", "Profile settings": "个人资料设置", "Notification": "通知", "Security": "安全", "Help & Support": "帮助与支持", "Terms & Conditions": "条款与条件", "Logout": "退出登录",

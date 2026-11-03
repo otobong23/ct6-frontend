@@ -3,7 +3,7 @@ const ar = {
   "Home": "الرئيسية", "Models": "النماذج", "AI trade": "التداول بالذكاء الاصطناعي", "Team": "الفريق", "Profile": "الملف الشخصي",
   "Deposit": "إيداع", "Withdraw": "سحب", "Total Assets": "إجمالي الأصول", "Trading": "التداول",
   "Trending Portfolios": "المحافظ الرائجة", "See all": "عرض الكل", "Add Funds": "إضافة أموال",
-  "Welcome CTSix": "مرحبًا CTSix", "Make you first Investment today": "ابدأ أول استثمار لك اليوم",
+  "Welcome CTSix": "مرحبًا CTSix", "Think Growth. Trade Smart. Move Forward.": "فكّر في النمو. تداول بذكاء. واصل التقدم.",
   "Invest Today": "استثمر اليوم", "Copy Trading": "نسخ التداول", "Follow proven trade patterns. Copy their moves. Earn with strategy.": "اتبع أنماط التداول المجربة. انسخ تحركاتهم. اربح بالاستراتيجية.",
   "Daily earnings": "الأرباح اليومية", "Min": "الحد الأدنى", "investment": "الاستثمار", "amount:": "المبلغ:", "Max": "الحد الأقصى", "Locked": "مقفل", "Activate": "تفعيل",
   "History": "السجل", "Bank details": "التفاصيل المصرفية", "Profile settings": "إعدادات الملف الشخصي", "Notification": "الإشعارات", "Security": "الأمان", "Help & Support": "المساعدة والدعم", "Terms & Conditions": "الشروط والأحكام", "Logout": "تسجيل الخروج",

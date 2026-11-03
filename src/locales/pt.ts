@@ -3,7 +3,7 @@ const pt = {
   "Home": "Início", "Models": "Modelos", "AI trade": "Trading com IA", "Team": "Equipe", "Profile": "Perfil",
   "Deposit": "Depositar", "Withdraw": "Sacar", "Total Assets": "Ativos totais", "Trading": "Trading",
   "Trending Portfolios": "Carteiras em alta", "See all": "Ver tudo", "Add Funds": "Adicionar fundos",
-  "Welcome CTSix": "Bem-vindo CTSix", "Make you first Investment today": "Faça seu primeiro investimento hoje",
+  "Welcome CTSix": "Bem-vindo CTSix", "Think Growth. Trade Smart. Move Forward.": "Pense em crescimento. Negocie com inteligência. Siga em frente.",
   "Invest Today": "Invista hoje", "Copy Trading": "Copy Trading", "Follow proven trade patterns. Copy their moves. Earn with strategy.": "Siga padrões de trading comprovados. Copie os movimentos deles. Ganhe com estratégia.",
   "Daily earnings": "Ganhos diários", "Min": "Mín.", "investment": "investimento", "amount:": "valor:", "Max": "Máx.", "Locked": "Bloqueado", "Activate": "Ativar",
   "History": "Histórico", "Bank details": "Dados bancários", "Profile settings": "Configurações do perfil", "Notification": "Notificações", "Security": "Segurança", "Help & Support": "Ajuda e suporte", "Terms & Conditions": "Termos e condições", "Logout": "Sair",
