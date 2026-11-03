@@ -42,7 +42,7 @@ export function CoinMarketList({ compact = false }: { compact?: boolean }) {
       }
     };
     void load();
-    const interval = window.setInterval(load, 60_000);
+    const interval = window.setInterval(load, 5_000);
     return () => {
       active = false;
       window.clearInterval(interval);
