@@ -77,7 +77,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <CoinMarketList compact />
+        <CoinMarketList />
 
         <p className="footer-copyright">{t("2026, CT6 Copyright")}</p>
       </section>
