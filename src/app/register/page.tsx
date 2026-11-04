@@ -99,7 +99,7 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit} className="stack">
         {apiError && <p role="alert" className="text-sm text-red-500">{apiError}</p>}
         <TextField
-          placeholder={t("Duke Margret")}
+          placeholder={t("Full Name")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           error={errors.name}
