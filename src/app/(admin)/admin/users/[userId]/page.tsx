@@ -132,6 +132,11 @@ export default function UserDetailPage() {
     walletPassword: "",
   });
   const [editError, setEditError] = useState("");
+  const [giftOpen, setGiftOpen] = useState(false);
+  const [giftAmount, setGiftAmount] = useState("");
+  const [giftNote, setGiftNote] = useState("");
+  const [giftError, setGiftError] = useState("");
+  const [giftPending, setGiftPending] = useState(false);
 
   const updateMut = useUpdateUser();
   const suspendMut = useToggleUserSuspend();
@@ -227,6 +232,47 @@ export default function UserDetailPage() {
     }
   };
 
+  const submitGift = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const amount = Number(giftAmount);
+    if (!user || !Number.isFinite(amount) || amount <= 0) {
+      setGiftError("Enter a valid amount greater than zero.");
+      return;
+    }
+    setGiftPending(true);
+    setGiftError("");
+    try {
+      const response = await adminApi.users.gift(user._id, { amount, note: giftNote.trim() || undefined });
+      if (typeof window !== "undefined") {
+        for (const id of [user._id, user.userID]) {
+          const key = `user_override_${id}`;
+          try {
+            const override = JSON.parse(localStorage.getItem(key) || "{}");
+            localStorage.setItem(key, JSON.stringify({
+              ...override,
+              balance: response.user.balance,
+              transactionCount: response.user.transactionCount,
+            }));
+          } catch {
+            // Ignore stale local overrides; the API query will refresh the displayed values.
+          }
+        }
+      }
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["admin", "users"] }),
+        qc.invalidateQueries({ queryKey: ["admin", "transactions"] }),
+        qc.invalidateQueries({ queryKey: ["admin", "user-transactions", userId] }),
+      ]);
+      setGiftOpen(false);
+      setGiftAmount("");
+      setGiftNote("");
+    } catch (err) {
+      setGiftError(err instanceof Error ? err.message : "Could not gift balance to this user.");
+    } finally {
+      setGiftPending(false);
+    }
+  };
+
   const handleEditBackdrop: React.MouseEventHandler<HTMLDivElement> = () => {
     if (!updateMut.isPending) setEditOpen(false);
   };
@@ -308,6 +354,35 @@ export default function UserDetailPage() {
 
   return (
     <>
+      {giftOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget && !giftPending) setGiftOpen(false); }}>
+          <section role="dialog" aria-modal="true" aria-labelledby="gift-user-title" className="w-full max-w-md rounded-2xl p-5 sm:p-6" style={{ background: "#151d2d", border: "1px solid #252f45" }}>
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div>
+                <h2 id="gift-user-title" className="text-lg font-bold text-white">Gift user balance</h2>
+                <p className="mt-1 text-xs text-penny-text-muted">The gift will be recorded as a SYSTEM transaction.</p>
+              </div>
+              <button type="button" disabled={giftPending} onClick={() => setGiftOpen(false)} className="rounded-lg p-2 text-penny-text-muted hover:text-white" aria-label="Close gift dialog"><Icon icon="mdi:close" width={20} /></button>
+            </div>
+            <form onSubmit={submitGift} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="gift-amount" className="text-xs font-semibold text-penny-text-muted">Amount (USD)</label>
+                <input id="gift-amount" type="number" min="0.01" step="0.01" required value={giftAmount} onChange={(event) => setGiftAmount(event.target.value)} className="w-full rounded-xl px-4 py-3 text-sm text-white" style={{ background: "#0d1624", border: "1px solid #252f45" }} />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="gift-note" className="text-xs font-semibold text-penny-text-muted">Note (optional)</label>
+                <textarea id="gift-note" maxLength={500} rows={3} value={giftNote} onChange={(event) => setGiftNote(event.target.value)} placeholder="Reason for this gift" className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder:text-[#6b7785]" style={{ background: "#0d1624", border: "1px solid #252f45" }} />
+              </div>
+              {giftError && <p role="alert" className="text-xs text-red-300">{giftError}</p>}
+              <div className="flex gap-3 pt-1">
+                <button type="button" disabled={giftPending} onClick={() => setGiftOpen(false)} className="flex-1 rounded-xl border border-[#303b50] py-3 text-sm font-semibold text-penny-text-muted disabled:opacity-50">Cancel</button>
+                <button type="submit" disabled={giftPending} className="flex-1 rounded-xl bg-emerald-400 py-3 text-sm font-bold text-[#0d1624] disabled:opacity-50">{giftPending ? "Gifting..." : "Gift balance"}</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
       {/* Edit Modal */}
       {editOpen && (
         <>
@@ -561,6 +636,15 @@ export default function UserDetailPage() {
 
           {/* Quick Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => { setGiftError(""); setGiftOpen(true); }}
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+              style={{ background: "rgba(0,212,161,0.12)", color: "#00d4a1" }}
+            >
+              <Icon icon="mdi:gift-outline" width={15} />
+              Gift Balance
+            </button>
             <button
               type="button"
               onClick={() => suspendMut.mutate({ id: user._id, isSuspended: !isSuspended })}

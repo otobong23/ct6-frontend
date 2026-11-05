@@ -24,6 +24,7 @@ import {
   type DetachUserDto,
   type ForgotPasswordDto,
   type ForgotPasswordResponse,
+  type GiftUserBalanceResponse,
   type KeywordQuery,
   type LiquidateCopyTradingDto,
   type LoginDto,
@@ -115,6 +116,7 @@ export const adminApi = {
     list: (query?: PaginationQuery) => api<AdminUserListResponse>(`/admin/users${queryString(query)}`),
     search: (query: KeywordQuery) => api<AdminUserResponse[]>(`/admin/search/users${queryString(query)}`),
     update: (id: string, data: UpdateAdminUserDto) => api<AdminUserResponse>(`/admin/users/${encodeURIComponent(id)}`, { method: "PATCH", ...jsonBody(data) }),
+    gift: (id: string, data: { amount: number; note?: string }) => api<GiftUserBalanceResponse>(`/admin/users/${encodeURIComponent(id)}/gift`, { method: "POST", ...jsonBody(data) }),
   },
   transactions: {
     list: (query?: PaginationQuery) => api<AdminTransactionListResponse>(`/admin/transactions${queryString(query)}`),

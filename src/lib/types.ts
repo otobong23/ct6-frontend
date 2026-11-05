@@ -25,7 +25,7 @@ export interface UserProfile {
 }
 
 // Transactions and order request DTOs/responses
-export type TransactionType = "deposit" | "withdraw" | "profit" | "loss" | "buy" | "sell" | "copy_trade" | "copy_trade_add_funds" | "copy_trade_liquidation";
+export type TransactionType = "deposit" | "withdraw" | "profit" | "loss" | "buy" | "sell" | "copy_trade" | "copy_trade_add_funds" | "copy_trade_liquidation" | "SYSTEM";
 export type TransactionStatus = "pending" | "completed" | "rejected" | "failed";
 export interface CreateTransactionDto { type: TransactionType; amount: number; currency?: string; reference?: string; note?: string }
 export interface TransactionResponse {
@@ -81,6 +81,7 @@ export interface UpdateCopyTradePurchaseDto {
 }
 export interface AdminCopyTradePurchaseQuery extends PaginationQuery { userId?: string; status?: "active" | "liquidated" }
 export interface AdminUserResponse extends UserProfile { isAdmin?: boolean; createdAt?: string; updatedAt?: string }
+export interface GiftUserBalanceResponse { user: AdminUserResponse; transaction: TransactionResponse }
 export interface AdminCrewMember { userID: string; email: string; level: number; joinedAt?: string; totalDeposits: number; totalWithdrawals: number; transactionCount: number }
 export interface CrewResponse {
   userID: string; ownerEmail: string; ownerReferralCode: string; totalMembers: number;
@@ -131,6 +132,7 @@ export interface EndpointResponses {
   "admin.users.list": AdminUserListResponse;
   "admin.users.search": AdminUserResponse[];
   "admin.users.update": AdminUserResponse;
+  "admin.users.gift": GiftUserBalanceResponse;
   "admin.transactions.list": AdminTransactionListResponse;
   "admin.transactions.updateStatus": TransactionResponse;
   "admin.copyTrading.createPlan": CopyTradingResponse;
