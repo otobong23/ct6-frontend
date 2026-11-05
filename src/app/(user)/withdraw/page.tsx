@@ -97,9 +97,9 @@ export default function WithdrawPage() {
             <p className="field-label">{t("Wallet password")}</p>
             <PasswordField placeholder={t("Wallet password")} value={walletPassword} onChange={setWalletPassword} />
           </div>
-          <div className="quick-amount-row">
+          {/* <div className="quick-amount-row">
             {quickAmounts.map((quickAmount) => <button type="button" key={quickAmount} className="quick-amount" onClick={() => setAmount(quickAmount)}>{quickAmount}</button>)}
-          </div>
+          </div> */}
           {error && <p className="field-error-text" role="alert">{error}</p>}
           <button type="submit" className="btn-primary" disabled={loading}>{loading ? t("Loading...") : t("Continue")}</button>
         </form>
