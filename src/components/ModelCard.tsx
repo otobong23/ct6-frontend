@@ -7,14 +7,17 @@ import { useTranslation } from "react-i18next";
 
 export function ModelCard({
   model,
+  userCrewMembers = 0,
   onActivate,
   activateHref,
 }: {
   model: Model;
+  userCrewMembers?: number;
   onActivate?: (m: Model) => void;
   activateHref?: string;
 }) {
   const { t } = useTranslation();
+  const locked = userCrewMembers < model.requiredCrewMembers;
   return (
     <div className="model-card">
       <div className="model-card-top">
@@ -39,22 +42,24 @@ export function ModelCard({
         </div>
       </div>
       <div className="model-line"></div>
-      {model.locked ? (
+      {locked ? (
         <>
-          {model.lockedNote && <p className="model-locked-note">{t(model.lockedNote)}</p>}
+          <p className="model-locked-note">{t("requiredCrewMembers members required to activate plan", { requiredCrewMembers: model.requiredCrewMembers })}</p>
           <button type="button" className="btn-locked" disabled>
             <Icon icon="fontisto:locked" width="16" />
             {t("Locked")}
           </button>
         </>
       ) : activateHref ? (
-        <Link href={activateHref} className="btn-primary btn-link">
-          {t("Activate")}
-        </Link>
+        <>
+          {model.requiredCrewMembers > 0 && <p className="model-locked-note">{t("Level 1 crew requirement met: {{current}} / {{required}}", { current: userCrewMembers, required: model.requiredCrewMembers })}</p>}
+          <Link href={activateHref} className="btn-primary btn-link">{t("Activate")}</Link>
+        </>
       ) : (
-        <button type="button" className="btn-primary" onClick={() => onActivate?.(model)}>
-          {t("Activate")}
-        </button>
+        <>
+          {model.requiredCrewMembers > 0 && <p className="model-locked-note">{t("Level 1 crew requirement met: {{current}} / {{required}}", { current: userCrewMembers, required: model.requiredCrewMembers })}</p>}
+          <button type="button" className="btn-primary" onClick={() => onActivate?.(model)}>{t("Activate")}</button>
+        </>
       )}
     </div>
   );

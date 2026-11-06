@@ -12,7 +12,7 @@ import { StatusOverlay } from "@/components/StatusOverlay";
 import { TextField } from "@/components/TextField";
 import { WalletChart } from "@/components/WalletCharts";
 import { useAuth } from "@/context/AuthContext";
-import { copyTradingApi } from "@/lib/endpoints";
+import { copyTradingApi, userApi } from "@/lib/endpoints";
 import type { CopyTradingResponse } from "@/lib/types";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 
@@ -23,6 +23,7 @@ export default function ModelsPage() {
   const { t } = useTranslation();
   const { refreshProfile } = useAuth();
   const [plans, setPlans] = useState<CopyTradingResponse[]>([]);
+  const [levelOneCrewMembers, setLevelOneCrewMembers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [stage, setStage] = useState<Stage>("idle");
@@ -36,8 +37,12 @@ export default function ModelsPage() {
 
   useEffect(() => {
     let cancelled = false;
-    copyTradingApi.list()
-      .then((response) => { if (!cancelled) setPlans(response); })
+    Promise.all([copyTradingApi.list(), userApi.crew.get()])
+      .then(([response, crew]) => {
+        if (cancelled) return;
+        setPlans(response);
+        setLevelOneCrewMembers(crew?.members?.level_1?.length ?? 0);
+      })
       .catch((requestError) => { if (!cancelled) setError(requestError instanceof Error ? requestError.message : t("Could not load copy-trading plans")); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
@@ -53,7 +58,7 @@ export default function ModelsPage() {
   }, [api]);
 
   function handleActivate(model: CopyTradingResponse) {
-    if (model.locked) return;
+    if (levelOneCrewMembers < model.requiredCrewMembers) return;
     setActiveModel(model);
     setAmount(String(model.minInvestment));
     setActionError("");
@@ -104,7 +109,8 @@ export default function ModelsPage() {
             {plans.map((plan) => (
               <CarouselItem className="basis-[85%] pl-5" key={plan._id}>
                 <ModelCard
-                  model={{ id: plan._id, name: plan.traderName, percent: `+${plan.dailyAveragePercentage}%`, days: plan.duration, min: money(plan.minInvestment, plan.currency), max: money(plan.maxInvestment, plan.currency), locked: plan.locked ?? false, lockedNote: plan.lockedNote }}
+                  model={{ id: plan._id, name: plan.traderName, percent: `+${plan.dailyAveragePercentage}%`, days: plan.duration, min: money(plan.minInvestment, plan.currency), max: money(plan.maxInvestment, plan.currency), requiredCrewMembers: plan.requiredCrewMembers }}
+                  userCrewMembers={levelOneCrewMembers}
                   onActivate={() => handleActivate(plan)}
                 />
               </CarouselItem>

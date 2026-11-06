@@ -6,6 +6,8 @@ const en = {
   "Welcome CTSix": "Welcome CTSix", "Think Growth. Trade Smart. Move Forward.": "Think Growth. Trade Smart. Move Forward.",
   "Invest Today": "Invest Today", "Copy Trading": "Copy Trading", "Follow proven trade patterns. Copy their moves. Earn with strategy.": "Follow proven trade patterns. Copy their moves. Earn with strategy.",
   "Daily earnings": "Daily earnings", "Min": "Min", "investment": "investment", "amount:": "amount:", "Max": "Max", "Locked": "Locked", "Activate": "Activate",
+  "requiredCrewMembers members required to activate plan": "{{requiredCrewMembers}} members required to activate plan",
+  "Level 1 crew requirement met: {{current}} / {{required}}": "Level 1 crew requirement met: {{current}} / {{required}}",
   "History": "History", "Bank details": "Bank details", "Profile settings": "Profile settings", "Notification": "Notification", "Security": "Security", "Help & Support": "Help & Support", "Terms & Conditions": "Terms & Conditions", "Logout": "Logout",
   "Save": "Save", "Register": "Register", "Continue": "Continue", "Cancel": "Cancel", "Failed": "Failed", "Activated": "Activated",
   "Confirm activation": "Confirm activation", "You're about to activate the trust trading model": "You're about to activate the trust trading model", "You will now received profit daily": "You will now receive profit daily", "You do not have sufficient fund to activate": "You do not have sufficient funds to activate",

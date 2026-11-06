@@ -54,7 +54,7 @@ export type RiskLevel = "low" | "medium" | "high";
 export interface CreateCopyTradingDto {
   traderName: string; riskLevel: RiskLevel; leverage: number; winrate: number; country?: string;
   last_10_trades?: number[]; duration: string; dailyAveragePercentage: number; purchases: number; totalAssets: number; minInvestment: number; maxInvestment: number;
-  locked?: boolean; lockedNote?: string;
+  requiredCrewMembers: number;
 }
 export type UpdateCopyTradingDto = Partial<CreateCopyTradingDto>;
 export interface BuyCopyTradingDto { amountInvested: number }
