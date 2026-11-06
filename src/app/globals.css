@@ -1442,6 +1442,93 @@ option {
   outline: none;
 }
 
+.transaction-type-filter {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  max-width: 360px;
+}
+
+.transaction-type-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 12px;
+  color: #f9fafb;
+  background: #17172a;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.transaction-type-filter-trigger:hover,
+.transaction-type-filter-trigger[aria-expanded="true"] {
+  background: #1f2937;
+}
+
+.transaction-type-filter-trigger span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-type-filter-chevron {
+  width: 10px;
+  height: 6px;
+  flex: 0 0 auto;
+}
+
+.transaction-type-filter-menu {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  color: #f9fafb;
+  background: #1f2937;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .28);
+}
+
+.transaction-type-filter-option {
+  display: block;
+  width: 100%;
+  padding: 9px 10px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  text-align: left;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.transaction-type-filter-option:hover,
+.transaction-type-filter-option:focus-visible,
+.transaction-type-filter-option[aria-checked="true"] {
+  background: #374151;
+  outline: none;
+}
+
+.transaction-type-filter--admin .transaction-type-filter-trigger {
+  background: #151d2d;
+  border-color: #303b50;
+  color: #fff;
+}
+
 .pill .language-selector-trigger {
   border: 0;
   background: transparent;

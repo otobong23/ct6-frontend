@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BackPill } from "@/components/AuthShell";
 import { PageHeader } from "@/components/PageHeader";
+import { TransactionTypeFilter } from "@/components/TransactionTypeFilter";
 import { transactionApi } from "@/lib/endpoints";
-import { TRANSACTION_TYPES, type TransactionResponse, type TransactionType } from "@/lib/types";
+import { type TransactionResponse, type TransactionType } from "@/lib/types";
 
 const PAGE_SIZE = 20;
 const debitTypes = new Set(["withdraw", "withdrawal", "buy", "copy_trade", "copy_trade_add_funds"]);
@@ -36,11 +37,6 @@ export default function HistoryPage() {
     return () => { cancelled = true; };
   }, [page, typeFilter, t]);
 
-  function labelType(type: TransactionType) {
-    if (type === "SYSTEM") return "System";
-    return type.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
-  }
-
   function formatAmount(transaction: TransactionResponse) {
     const currency = transaction.currency || "USD";
     const amount = new Intl.NumberFormat(undefined, { style: "currency", currency, maximumFractionDigits: 2 }).format(Math.abs(transaction.amount));
@@ -57,10 +53,7 @@ export default function HistoryPage() {
       <h1 className="section-title" style={{ marginTop: 18 }}>{t("History")}</h1>
       <div className="mt-4">
         <label htmlFor="history-type-filter" className="field-label">{t("Filter by type")}</label>
-        <select id="history-type-filter" className="field-input" value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value as TransactionType | "all"); setPage(1); }}>
-          <option value="all">{t("All transaction types")}</option>
-          {TRANSACTION_TYPES.map((type) => <option value={type} key={type}>{t(labelType(type))}</option>)}
-        </select>
+        <TransactionTypeFilter id="history-type-filter" value={typeFilter} onChange={(value) => { setTypeFilter(value); setPage(1); }} />
       </div>
       {loading && <p className="text-muted text-center" role="status">{t("Loading...")}</p>}
       {error && <p className="field-error-text" role="alert">{error}</p>}

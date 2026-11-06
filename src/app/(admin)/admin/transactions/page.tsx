@@ -5,9 +5,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Icon } from "@iconify/react";
 import { useAdminTransactions } from "@/hooks/queries/useAdminTransactions";
 import { TransactionDetailsModal } from "@/components/admin/TransactionDetailsModal";
+import { TransactionTypeFilter } from "@/components/TransactionTypeFilter";
 import { adminApi } from "@/lib/endpoints";
 import { formatTransactionDate, formatUSD } from "@/lib/admin-format";
-import { TRANSACTION_TYPES, type TransactionResponse, type TransactionStatus, type TransactionType } from "@/lib/types";
+import { type TransactionResponse, type TransactionStatus, type TransactionType } from "@/lib/types";
 
 const PAGE_SIZE = 25;
 export default function AdminTransactionsPage() {
@@ -34,11 +35,6 @@ export default function AdminTransactionsPage() {
   const pageCount = pagination?.totalPages ?? 1;
   const selectedTransaction = transactions.find((transaction) => transaction._id === selectedTransactionId);
 
-  function labelType(type: TransactionType) {
-    if (type === "SYSTEM") return "System";
-    return type.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
-  }
-
   function changeStatus(transaction: TransactionResponse, status: TransactionStatus) {
     if (status === transaction.status) return;
     setActionError("");
@@ -59,10 +55,7 @@ export default function AdminTransactionsPage() {
 
       <div className="max-w-xs">
         <label htmlFor="admin-transaction-type" className="mb-2 block text-xs font-semibold text-penny-text-muted">Filter by type</label>
-        <select id="admin-transaction-type" value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value as TransactionType | "all"); setPage(1); }} className="w-full rounded-xl border border-[#303b50] bg-[#151d2d] px-3 py-2.5 text-sm text-white">
-          <option value="all">All transaction types</option>
-          {TRANSACTION_TYPES.map((type) => <option value={type} key={type}>{labelType(type)}</option>)}
-        </select>
+        <TransactionTypeFilter id="admin-transaction-type" value={typeFilter} admin onChange={(value) => { setTypeFilter(value); setPage(1); }} />
       </div>
 
       <section className="overflow-hidden rounded-2xl border border-[#252f45] bg-[#151d2d]">
