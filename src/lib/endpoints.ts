@@ -35,6 +35,7 @@ import {
   type SignUpDto,
   type SuccessMessageResponse,
   type TransactionResponse,
+  type TransactionListQuery,
   type UpdateAdminUserDto,
   type UpdateCopyTradingDto,
   type UpdateCopyTradePurchaseDto,
@@ -91,7 +92,7 @@ export const userApi = {
 
 export const transactionApi = {
   create: (data: CreateTransactionDto) => api<TransactionResponse>("/transactions", { method: "POST", ...jsonBody(data) }),
-  list: (query?: PaginationQuery) => api<UserTransactionListResponse>(`/transactions${queryString(query)}`),
+  list: (query?: TransactionListQuery) => api<UserTransactionListResponse>(`/transactions${queryString(query)}`),
   get: (id: string) => api<TransactionResponse>(`/transactions/${encodeURIComponent(id)}`),
   getActiveEarner: () => api<GetActiveEarnerResponse>("/transactions/active-earner"),
   orders: {
@@ -119,7 +120,7 @@ export const adminApi = {
     gift: (id: string, data: { amount: number; note?: string }) => api<GiftUserBalanceResponse>(`/admin/users/${encodeURIComponent(id)}/gift`, { method: "POST", ...jsonBody(data) }),
   },
   transactions: {
-    list: (query?: PaginationQuery) => api<AdminTransactionListResponse>(`/admin/transactions${queryString(query)}`),
+    list: (query?: TransactionListQuery) => api<AdminTransactionListResponse>(`/admin/transactions${queryString(query)}`),
     updateStatus: (id: string, data: UpdateTransactionStatusDto) => api<TransactionResponse>(`/admin/transactions/${encodeURIComponent(id)}/status`, { method: "PATCH", ...jsonBody(data) }),
   },
   copyTrading: {

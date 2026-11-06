@@ -7,15 +7,16 @@ import { useAdminTransactions } from "@/hooks/queries/useAdminTransactions";
 import { TransactionDetailsModal } from "@/components/admin/TransactionDetailsModal";
 import { adminApi } from "@/lib/endpoints";
 import { formatTransactionDate, formatUSD } from "@/lib/admin-format";
-import type { TransactionResponse, TransactionStatus } from "@/lib/types";
+import { TRANSACTION_TYPES, type TransactionResponse, type TransactionStatus, type TransactionType } from "@/lib/types";
 
 const PAGE_SIZE = 25;
 export default function AdminTransactionsPage() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
   const [actionError, setActionError] = useState("");
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
-  const { data, isLoading, error } = useAdminTransactions(page, PAGE_SIZE);
+  const { data, isLoading, error } = useAdminTransactions(page, PAGE_SIZE, typeFilter);
   const updateStatus = useMutation({
     mutationFn: ({ id, status }: { id: string; status: TransactionStatus }) =>
       adminApi.transactions.updateStatus(id, { status }),
@@ -32,6 +33,11 @@ export default function AdminTransactionsPage() {
   const pagination = data?.pagination;
   const pageCount = pagination?.totalPages ?? 1;
   const selectedTransaction = transactions.find((transaction) => transaction._id === selectedTransactionId);
+
+  function labelType(type: TransactionType) {
+    if (type === "SYSTEM") return "System";
+    return type.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+  }
 
   function changeStatus(transaction: TransactionResponse, status: TransactionStatus) {
     if (status === transaction.status) return;
@@ -51,9 +57,17 @@ export default function AdminTransactionsPage() {
       {actionError && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{actionError}</p>}
       {error && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error instanceof Error ? error.message : "Could not load transactions."}</p>}
 
+      <div className="max-w-xs">
+        <label htmlFor="admin-transaction-type" className="mb-2 block text-xs font-semibold text-penny-text-muted">Filter by type</label>
+        <select id="admin-transaction-type" value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value as TransactionType | "all"); setPage(1); }} className="w-full rounded-xl border border-[#303b50] bg-[#151d2d] px-3 py-2.5 text-sm text-white">
+          <option value="all">All transaction types</option>
+          {TRANSACTION_TYPES.map((type) => <option value={type} key={type}>{labelType(type)}</option>)}
+        </select>
+      </div>
+
       <section className="overflow-hidden rounded-2xl border border-[#252f45] bg-[#151d2d]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-left text-sm">
+          <table className="w-full min-w-225 text-left text-sm">
             <thead className="bg-[#0d1624] text-xs uppercase tracking-wide text-penny-text-muted">
               <tr>
                 <th scope="col" className="px-4 py-3">User / transaction</th>

@@ -26,6 +26,8 @@ export interface UserProfile {
 
 // Transactions and order request DTOs/responses
 export type TransactionType = "deposit" | "withdraw" | "profit" | "loss" | "buy" | "sell" | "copy_trade" | "copy_trade_add_funds" | "copy_trade_liquidation" | "SYSTEM";
+export interface TransactionListQuery extends PaginationQuery { type?: TransactionType | "all" }
+export const TRANSACTION_TYPES: TransactionType[] = ["deposit", "withdraw", "profit", "loss", "buy", "sell", "copy_trade", "copy_trade_add_funds", "copy_trade_liquidation", "SYSTEM"];
 export type TransactionStatus = "pending" | "completed" | "rejected" | "failed";
 export interface CreateTransactionDto { type: TransactionType; amount: number; currency?: string; reference?: string; note?: string }
 export interface TransactionResponse {

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { BackPill } from "@/components/AuthShell";
 import { PageHeader } from "@/components/PageHeader";
 import { transactionApi } from "@/lib/endpoints";
-import type { TransactionResponse } from "@/lib/types";
+import { TRANSACTION_TYPES, type TransactionResponse, type TransactionType } from "@/lib/types";
 
 const PAGE_SIZE = 20;
 const debitTypes = new Set(["withdraw", "withdrawal", "buy", "copy_trade", "copy_trade_add_funds"]);
@@ -15,6 +15,7 @@ export default function HistoryPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,7 +23,7 @@ export default function HistoryPage() {
     let cancelled = false;
     setLoading(true);
     setError("");
-    transactionApi.list({ page, limit: PAGE_SIZE })
+    transactionApi.list({ page, limit: PAGE_SIZE, type: typeFilter })
       .then((response) => {
         if (cancelled) return;
         setTransactions(response.data);
@@ -33,7 +34,12 @@ export default function HistoryPage() {
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [page, t]);
+  }, [page, typeFilter, t]);
+
+  function labelType(type: TransactionType) {
+    if (type === "SYSTEM") return "System";
+    return type.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+  }
 
   function formatAmount(transaction: TransactionResponse) {
     const currency = transaction.currency || "USD";
@@ -49,6 +55,13 @@ export default function HistoryPage() {
     <div className="dashboard-shell">
       <PageHeader right={<BackPill href="/profile" />} />
       <h1 className="section-title" style={{ marginTop: 18 }}>{t("History")}</h1>
+      <div className="mt-4">
+        <label htmlFor="history-type-filter" className="field-label">{t("Filter by type")}</label>
+        <select id="history-type-filter" className="field-input" value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value as TransactionType | "all"); setPage(1); }}>
+          <option value="all">{t("All transaction types")}</option>
+          {TRANSACTION_TYPES.map((type) => <option value={type} key={type}>{t(labelType(type))}</option>)}
+        </select>
+      </div>
       {loading && <p className="text-muted text-center" role="status">{t("Loading...")}</p>}
       {error && <p className="field-error-text" role="alert">{error}</p>}
       {!loading && !error && transactions.length === 0 && <p className="text-muted text-center">{t("No transactions yet.")}</p>}
